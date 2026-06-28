@@ -21,7 +21,7 @@ export function Header({
   const isStoreView = !!currentSubdomain;
 
   return (
-    <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm px-4 py-4 md:px-8">
+    <header className="sticky top-0 z-30 bg-[#1A1A1A] border-b border-gray-800 shadow-sm px-4 py-4 md:px-8">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Branding / Logo */}
         <div 
@@ -32,7 +32,7 @@ export function Header({
             <ShoppingBag size={20} className="stroke-[2.5]" />
           </div>
           <div>
-            <h1 className="text-xl md:text-2xl font-black tracking-tighter text-[#1A1A1A] leading-none uppercase">
+            <h1 className="text-xl md:text-2xl font-black tracking-tighter text-white leading-none uppercase">
               {isStoreView ? (
                 <>
                   <span className="text-[#CC0000]">{subdomainUser?.display_name || currentSubdomain}</span>
@@ -58,9 +58,9 @@ export function Header({
                 // Navigate back to Main Feed (by clearing subdomain)
                 window.location.search = "";
               }}
-              className="flex items-center gap-1.5 px-3.5 py-2 border border-gray-200 hover:bg-gray-50 text-gray-700 font-bold text-xs rounded-xl transition"
+              className="flex items-center gap-1.5 px-3.5 py-2 border border-gray-700 hover:bg-gray-800 text-white font-bold text-xs rounded-xl transition"
             >
-              <Store size={14} />
+              <Store size={14} className="text-[#CC0000]" />
               <span>Explore Main Feed</span>
             </button>
           )}
@@ -73,10 +73,10 @@ export function Header({
                 className={`flex items-center gap-1.5 px-3.5 py-2 font-bold text-xs rounded-xl transition shadow-sm ${
                   currentPath === "/create-post"
                     ? "bg-[#CC0000] text-white"
-                    : "bg-gray-50 hover:bg-gray-100 text-[#1A1A1A] border border-gray-200"
+                    : "bg-gray-800 hover:bg-gray-700 text-white border border-gray-700"
                 }`}
               >
-                <PlusCircle size={14} />
+                <PlusCircle size={14} className={currentPath === "/create-post" ? "text-white" : "text-[#CC0000]"} />
                 <span>Create Post</span>
               </button>
 
@@ -84,22 +84,22 @@ export function Header({
                 onClick={() => onNavigate("/settings")}
                 className={`flex items-center gap-1.5 px-3.5 py-2 font-bold text-xs rounded-xl transition border ${
                   currentPath === "/settings"
-                    ? "bg-[#1A1A1A] text-white border-[#1A1A1A]"
-                    : "bg-white hover:bg-gray-50 text-gray-700 border-gray-200"
+                    ? "bg-[#CC0000] text-white border-[#CC0000]"
+                    : "bg-transparent hover:bg-gray-800 text-gray-200 border-gray-700"
                 }`}
               >
-                <Settings size={14} />
+                <Settings size={14} className={currentPath === "/settings" ? "text-white" : "text-[#CC0000]"} />
                 <span>Settings</span>
               </button>
 
-              <div className="flex items-center gap-2 pl-2 border-l border-gray-200">
+              <div className="flex items-center gap-2 pl-2 border-l border-gray-700">
                 <img
                   src={currentUser.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${currentUser.username}`}
                   alt={currentUser.display_name}
-                  className="h-8 w-8 rounded-xl object-cover border border-gray-200 shadow-sm"
+                  className="h-8 w-8 rounded-xl object-cover border border-gray-700 shadow-sm"
                 />
                 <div className="text-left">
-                  <span className="block text-xs font-black text-[#1A1A1A] leading-none">
+                  <span className="block text-xs font-black text-white leading-none">
                     {currentUser.display_name}
                   </span>
                   <span className="text-[10px] font-mono text-gray-400 lowercase">
@@ -109,7 +109,7 @@ export function Header({
                 <button
                   onClick={onLogout}
                   title="Logout"
-                  className="p-1.5 hover:bg-red-50 hover:text-[#CC0000] text-gray-400 rounded-lg transition ml-1"
+                  className="p-1.5 hover:bg-gray-800 hover:text-[#CC0000] text-gray-400 rounded-lg transition ml-1"
                 >
                   <LogOut size={16} />
                 </button>
@@ -120,9 +120,9 @@ export function Header({
               {/* Logged Out Items */}
               <button
                 onClick={() => onNavigate("/login")}
-                className="flex items-center gap-1.5 px-4 py-2 border border-gray-200 hover:bg-gray-50 text-gray-700 font-bold text-xs rounded-xl transition"
+                className="flex items-center gap-1.5 px-4 py-2 border border-gray-700 hover:bg-gray-800 text-white font-bold text-xs rounded-xl transition"
               >
-                <LogIn size={14} />
+                <LogIn size={14} className="text-[#CC0000]" />
                 <span>Log In</span>
               </button>
               
@@ -144,7 +144,7 @@ export function Header({
               onClick={() => onNavigate("/settings")}
               src={currentUser.avatar_url}
               alt={currentUser.display_name}
-              className="h-8 w-8 rounded-xl object-cover border border-gray-200 shadow cursor-pointer active:scale-95 transition-transform"
+              className="h-8 w-8 rounded-xl object-cover border border-gray-700 shadow cursor-pointer active:scale-95 transition-transform"
             />
           ) : (
             <button

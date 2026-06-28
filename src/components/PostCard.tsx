@@ -35,7 +35,7 @@ export function PostCard({ post, username, onNavigateToPost }: PostCardProps) {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -15 }}
         whileHover={{ y: -4, transition: { duration: 0.15 } }}
-        className="relative group overflow-hidden bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between h-[360px] md:h-[400px]"
+        className="relative group overflow-hidden bg-white rounded-2xl shadow-sm border border-gray-100 border-l-[3px] border-l-[#CC0000] flex flex-col justify-between h-[360px] md:h-[400px]"
         style={{
           backgroundImage: `url(${post.image_url})`,
           backgroundSize: "cover",
@@ -47,13 +47,15 @@ export function PostCard({ post, username, onNavigateToPost }: PostCardProps) {
 
         {/* Content Container (absolutely positioned over bg) */}
         <div className="relative z-10 p-4 md:p-5 flex flex-col justify-between h-full w-full text-white">
-          {/* Top Info */}
-          <div className="flex justify-between items-start">
-            <span className="text-[10px] md:text-xs font-mono font-bold tracking-wider uppercase bg-red-600 text-white px-2.5 py-1 rounded-full shadow-sm">
+          {/* Top Info Overlay */}
+          <div className="flex justify-between items-center w-full bg-black/40 backdrop-blur-xs px-3 py-2 rounded-xl border border-white/10 shadow-sm">
+            <span className="text-[10px] md:text-xs font-mono font-bold tracking-wider uppercase bg-[#CC0000] text-white px-2.5 py-0.5 rounded-full shadow-sm">
               @{username}
             </span>
-            <div className="bg-white/95 px-2 py-1 rounded-lg text-black backdrop-blur-sm shadow">
-              <StarRating rating={post.rating} count={post.review_count} />
+            <div className="flex items-center gap-1 font-mono text-xs font-bold text-white">
+              <span className="text-yellow-400 text-base">★</span>
+              <span className="text-white font-bold text-xs">{post.rating.toFixed(1)}</span>
+              <span className="text-gray-300 font-normal text-[10px]">({post.review_count.toLocaleString()} reviews)</span>
             </div>
           </div>
 

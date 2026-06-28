@@ -1,6 +1,7 @@
 import { neon } from "@neondatabase/serverless";
 import fs from "fs";
 import path from "path";
+import bcrypt from "bcryptjs";
 
 // Initialize environment variables or check if DATABASE_URL is available
 const dbUrl = process.env.DATABASE_URL;
@@ -69,6 +70,34 @@ function writeLocalDb(data: { users: User[]; posts: Post[] }) {
 // Check database connection type
 export const isUsingNeon = !!dbUrl;
 
+// Seeding function
+export async function seedSampleData() {
+  try {
+    const existingDemoUser = await db.getUserByUsername("techcurator");
+    if (!existingDemoUser) {
+      console.log("Seeding beautiful sample data...");
+      const passwordHash = await bcrypt.hash("password123", 10);
+      
+      const demoUser: User = {
+        id: "d3b07384-d113-4ec4-a14f-83679c53641b",
+        username: "techcurator",
+        email: "tech@curator.com",
+        password_hash: passwordHash,
+        display_name: "Tech Curator",
+        bio: "Curating high-quality tech gear & productivity tools for minimalists.",
+        avatar_url: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200",
+        search_console_meta_tag: `<meta name="google-site-verification" content="trodex-sample-verification-code-12345"/>`,
+        created_at: new Date().toISOString()
+      };
+      
+      await db.createUser(demoUser);
+      console.log("Seeding complete!");
+    }
+  } catch (err) {
+    console.error("Error during sample data seeding:", err);
+  }
+}
+
 // Setup tables in Neon if connected
 if (isUsingNeon) {
   const sql = neon(dbUrl) as any;
@@ -107,10 +136,14 @@ if (isUsingNeon) {
         );
       `);
       console.log("Neon PostgreSQL database schema checked/created successfully.");
+      await seedSampleData();
     } catch (err) {
       console.error("Error bootstrapping Neon schema:", err);
     }
   })();
+} else {
+  // Setup fallback local database and seed
+  seedSampleData();
 }
 
 // High-level wrapper over DB operations to transparently support Neon or Local Fallback

@@ -1,17 +1,19 @@
-import React, { useState, useEffect } from "react";
-import { Header } from "./components/Header.tsx";
-import { BottomNav } from "./components/BottomNav.tsx";
-import { FeedView } from "./components/FeedView.tsx";
-import { ProfileView } from "./components/ProfileView.tsx";
-import { PostView } from "./components/PostView.tsx";
-import { CreatePostView } from "./components/CreatePostView.tsx";
-import { SettingsView } from "./components/SettingsView.tsx";
-import { AuthView } from "./components/AuthView.tsx";
-import { motion, AnimatePresence } from "motion/react";
-import { Loader2, Store, Cpu, User } from "lucide-react";
+"use client";
 
-export default function App() {
-  const [currentPath, setCurrentPath] = useState(window.location.pathname);
+import React, { useState, useEffect } from "react";
+import { Header } from "./Header.tsx";
+import { BottomNav } from "./BottomNav.tsx";
+import { FeedView } from "./FeedView.tsx";
+import { ProfileView } from "./ProfileView.tsx";
+import { PostView } from "./PostView.tsx";
+import { CreatePostView } from "./CreatePostView.tsx";
+import { SettingsView } from "./SettingsView.tsx";
+import { AuthView } from "./AuthView.tsx";
+import { motion, AnimatePresence } from "motion/react";
+import { Loader2, Store } from "lucide-react";
+
+export function ClientApp() {
+  const [currentPath, setCurrentPath] = useState("/");
   
   // Context states from server
   const [subdomain, setSubdomain] = useState<string | null>(null);
@@ -20,8 +22,10 @@ export default function App() {
   const [isUsingNeon, setIsUsingNeon] = useState(false);
   const [loadingContext, setLoadingContext] = useState(true);
 
-  // Sync state with back button popstate
+  // Sync state with back button popstate & set initial path on mount safely
   useEffect(() => {
+    setCurrentPath(window.location.pathname);
+
     const handlePopState = () => {
       setCurrentPath(window.location.pathname);
     };
@@ -84,7 +88,6 @@ export default function App() {
 
   const handleProfileClick = () => {
     if (currentUser) {
-      // Toggle to their personal store view
       handleSimulateSubdomain(currentUser.username);
     } else {
       navigateTo("/login");
@@ -178,7 +181,6 @@ export default function App() {
                       return (
                         <FeedView
                           onNavigateToPost={(username, slug) => {
-                            // To explore correctly, simulate subdomain of post author first
                             handleSimulateSubdomain(username).then(() => {
                               navigateTo(`/post/${slug}`);
                             });
@@ -209,7 +211,6 @@ export default function App() {
                         <CreatePostView
                           onNavigate={navigateTo}
                           onPostCreated={() => {
-                            // After creation, go to user's store
                             handleSimulateSubdomain(currentUser.username).then(() => {
                               navigateTo("/");
                             });
@@ -239,7 +240,6 @@ export default function App() {
                         />
                       );
                     default:
-                      // Fallback wildcard routing
                       return (
                         <div className="text-center py-20 space-y-3">
                           <h2 className="text-2xl font-black uppercase">Page Not Found</h2>
@@ -269,3 +269,5 @@ export default function App() {
     </div>
   );
 }
+
+export default ClientApp;
