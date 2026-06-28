@@ -19,7 +19,12 @@ export async function GET(req: NextRequest) {
           display_name: rawSubUser.display_name,
           bio: rawSubUser.bio,
           avatar_url: rawSubUser.avatar_url,
-          search_console_meta_tag: rawSubUser.search_console_meta_tag
+          search_console_meta_tag: rawSubUser.search_console_meta_tag,
+          google_verification: rawSubUser.google_verification,
+          bing_verification: rawSubUser.bing_verification,
+          yandex_verification: rawSubUser.yandex_verification,
+          baidu_verification: rawSubUser.baidu_verification,
+          pinterest_verification: rawSubUser.pinterest_verification
         };
       }
     }
@@ -35,6 +40,12 @@ export async function GET(req: NextRequest) {
           display_name: rawUser.display_name,
           bio: rawUser.bio,
           avatar_url: rawUser.avatar_url,
+          search_console_meta_tag: rawUser.search_console_meta_tag,
+          google_verification: rawUser.google_verification,
+          bing_verification: rawUser.bing_verification,
+          yandex_verification: rawUser.yandex_verification,
+          baidu_verification: rawUser.baidu_verification,
+          pinterest_verification: rawUser.pinterest_verification
         };
       }
     }

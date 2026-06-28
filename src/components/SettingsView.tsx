@@ -12,7 +12,13 @@ export function SettingsView({ currentUser, onNavigate, onRefreshContext }: Sett
   const [displayName, setDisplayName] = useState("");
   const [bio, setBio] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
-  const [searchConsoleTag, setSearchConsoleTag] = useState("");
+  
+  // Search engine fields
+  const [googleVerification, setGoogleVerification] = useState("");
+  const [bingVerification, setBingVerification] = useState("");
+  const [yandexVerification, setYandexVerification] = useState("");
+  const [baiduVerification, setBaiduVerification] = useState("");
+  const [pinterestVerification, setPinterestVerification] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
@@ -23,7 +29,11 @@ export function SettingsView({ currentUser, onNavigate, onRefreshContext }: Sett
       setDisplayName(currentUser.display_name || "");
       setBio(currentUser.bio || "");
       setAvatarUrl(currentUser.avatar_url || "");
-      setSearchConsoleTag(currentUser.search_console_meta_tag || "");
+      setGoogleVerification(currentUser.google_verification || "");
+      setBingVerification(currentUser.bing_verification || "");
+      setYandexVerification(currentUser.yandex_verification || "");
+      setBaiduVerification(currentUser.baidu_verification || "");
+      setPinterestVerification(currentUser.pinterest_verification || "");
     }
   }, [currentUser]);
 
@@ -53,7 +63,11 @@ export function SettingsView({ currentUser, onNavigate, onRefreshContext }: Sett
           display_name: displayName,
           bio,
           avatar_url: avatarUrl,
-          search_console_meta_tag: searchConsoleTag
+          google_verification: googleVerification,
+          bing_verification: bingVerification,
+          yandex_verification: yandexVerification,
+          baidu_verification: baiduVerification,
+          pinterest_verification: pinterestVerification
         })
       });
 
@@ -124,7 +138,7 @@ export function SettingsView({ currentUser, onNavigate, onRefreshContext }: Sett
             <div className="space-y-4">
               <h3 className="font-black text-sm uppercase tracking-wider text-gray-400 flex items-center gap-1.5 border-b border-gray-50 pb-2">
                 <User size={16} />
-                <span>Public Brand Profile</span>
+                <span>SECTION A: Store Customization</span>
               </h3>
 
               {/* Display Name */}
@@ -183,40 +197,116 @@ export function SettingsView({ currentUser, onNavigate, onRefreshContext }: Sett
                   className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200/80 focus:border-[#CC0000] focus:bg-white rounded-xl text-xs font-medium text-[#1A1A1A] transition focus:outline-none min-h-[90px] resize-none"
                 />
               </div>
+
+              {/* Readonly Store URL Preview */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-[#1A1A1A] uppercase">
+                  Your Store URL (Readonly Preview)
+                </label>
+                <input
+                  type="text"
+                  value={`https://${currentUser.username}.trodex.com`}
+                  readOnly
+                  className="w-full px-4 py-3 bg-gray-100 border-2 border-gray-200 text-gray-500 rounded-xl text-xs font-mono select-all focus:outline-none cursor-default"
+                />
+              </div>
             </div>
 
-            {/* Right Hand: Search Console Tag */}
+            {/* Right Hand: Search Engine Verification Fields */}
             <div className="space-y-4">
               <h3 className="font-black text-sm uppercase tracking-wider text-gray-400 flex items-center gap-1.5 border-b border-gray-50 pb-2">
                 <ShieldCheck size={16} />
-                <span>Search Console Verification</span>
+                <span>SECTION B: Search Engine Verification</span>
               </h3>
 
-              {/* Instruction description card */}
-              <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 text-xs text-gray-600 font-medium space-y-2 leading-relaxed font-sans">
-                <div className="flex items-center gap-1.5 text-gray-800 font-bold">
-                  <Globe size={14} className="text-[#CC0000]" />
-                  <span>Subdomain SEO Instructions</span>
-                </div>
-                <p>
-                  Copy the HTML tag from Google Search Console and paste it here. It will appear in your profile's <code className="font-mono bg-white px-1 py-0.5 rounded border border-gray-200">&lt;head&gt;</code> tag automatically so Google can verify your ownership.
+              {/* 1. Google Verification */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-[#1A1A1A] flex items-center gap-1.5 uppercase">
+                  <span className="h-2 w-2 rounded-full bg-red-500" />
+                  <span>Google Verification Meta Tag</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder='<meta name="google-site-verification" content="xxx"/>'
+                  value={googleVerification}
+                  onChange={(e) => setGoogleVerification(e.target.value)}
+                  className="w-full px-4 py-2.5 bg-gray-50 border-2 border-gray-200/80 focus:border-[#CC0000] focus:bg-white rounded-xl text-xs font-mono text-gray-700 transition focus:outline-none"
+                />
+                <p className="text-[10px] text-gray-400 font-sans leading-relaxed">
+                  Get from <a href="https://search.google.com/search-console" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#CC0000]">search.google.com/search-console</a>
                 </p>
-                <div className="text-[10px] text-gray-400 font-mono pt-1">
-                  Format expected: &lt;meta name="google-site-verification" content="..." /&gt;
-                </div>
               </div>
 
-              {/* Textarea */}
+              {/* 2. Bing Verification */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-[#1A1A1A] uppercase">
-                  HTML Meta Verification Tag
+                <label className="text-xs font-bold text-[#1A1A1A] flex items-center gap-1.5 uppercase">
+                  <span className="h-2 w-2 rounded-full bg-blue-500" />
+                  <span>Bing Verification Meta Tag</span>
                 </label>
-                <textarea
-                  placeholder='<meta name="google-site-verification" content="Paste your meta code here"/>'
-                  value={searchConsoleTag}
-                  onChange={(e) => setSearchConsoleTag(e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200/80 focus:border-[#CC0000] focus:bg-white rounded-xl text-xs font-mono text-gray-700 transition focus:outline-none min-h-[110px] resize-y"
+                <input
+                  type="text"
+                  placeholder='<meta name="msvalidate.01" content="xxx"/>'
+                  value={bingVerification}
+                  onChange={(e) => setBingVerification(e.target.value)}
+                  className="w-full px-4 py-2.5 bg-gray-50 border-2 border-gray-200/80 focus:border-[#CC0000] focus:bg-white rounded-xl text-xs font-mono text-gray-700 transition focus:outline-none"
                 />
+                <p className="text-[10px] text-gray-400 font-sans leading-relaxed">
+                  Get from <a href="https://bing.com/webmasters" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#CC0000]">bing.com/webmasters</a>
+                </p>
+              </div>
+
+              {/* 3. Yandex Verification */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-[#1A1A1A] flex items-center gap-1.5 uppercase">
+                  <span className="h-2 w-2 rounded-full bg-yellow-500" />
+                  <span>Yandex Verification Meta Tag</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder='<meta name="yandex-verification" content="xxx"/>'
+                  value={yandexVerification}
+                  onChange={(e) => setYandexVerification(e.target.value)}
+                  className="w-full px-4 py-2.5 bg-gray-50 border-2 border-gray-200/80 focus:border-[#CC0000] focus:bg-white rounded-xl text-xs font-mono text-gray-700 transition focus:outline-none"
+                />
+                <p className="text-[10px] text-gray-400 font-sans leading-relaxed">
+                  Get from <a href="https://webmaster.yandex.com" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#CC0000]">webmaster.yandex.com</a>
+                </p>
+              </div>
+
+              {/* 4. Baidu Verification */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-[#1A1A1A] flex items-center gap-1.5 uppercase">
+                  <span className="h-2 w-2 rounded-full bg-orange-500" />
+                  <span>Baidu Verification Meta Tag</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder='<meta name="baidu-site-verification" content="xxx"/>'
+                  value={baiduVerification}
+                  onChange={(e) => setBaiduVerification(e.target.value)}
+                  className="w-full px-4 py-2.5 bg-gray-50 border-2 border-gray-200/80 focus:border-[#CC0000] focus:bg-white rounded-xl text-xs font-mono text-gray-700 transition focus:outline-none"
+                />
+                <p className="text-[10px] text-gray-400 font-sans leading-relaxed">
+                  Get from <a href="https://ziyuan.baidu.com" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#CC0000]">ziyuan.baidu.com</a>
+                </p>
+              </div>
+
+              {/* 5. Pinterest Verification */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-[#1A1A1A] flex items-center gap-1.5 uppercase">
+                  <span className="h-2 w-2 rounded-full bg-black" />
+                  <span>Pinterest Domain Verification</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder='<meta name="p:domain_verify" content="xxx"/>'
+                  value={pinterestVerification}
+                  onChange={(e) => setPinterestVerification(e.target.value)}
+                  className="w-full px-4 py-2.5 bg-gray-50 border-2 border-gray-200/80 focus:border-[#CC0000] focus:bg-white rounded-xl text-xs font-mono text-gray-700 transition focus:outline-none"
+                />
+                <p className="text-[10px] text-gray-400 font-sans leading-relaxed">
+                  Get from <a href="https://pinterest.com/settings/claim" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#CC0000]">pinterest.com/settings/claim</a>
+                </p>
               </div>
             </div>
           </div>

@@ -9,7 +9,17 @@ export async function PUT(req: NextRequest) {
   }
 
   try {
-    const { display_name, bio, avatar_url, search_console_meta_tag } = await req.json();
+    const { 
+      display_name, 
+      bio, 
+      avatar_url, 
+      search_console_meta_tag,
+      google_verification,
+      bing_verification,
+      yandex_verification,
+      baidu_verification,
+      pinterest_verification
+    } = await req.json();
 
     const updates: any = {};
     if (display_name !== undefined) updates.display_name = display_name;
@@ -23,6 +33,11 @@ export async function PUT(req: NextRequest) {
     if (search_console_meta_tag !== undefined) {
       updates.search_console_meta_tag = search_console_meta_tag;
     }
+    if (google_verification !== undefined) updates.google_verification = google_verification;
+    if (bing_verification !== undefined) updates.bing_verification = bing_verification;
+    if (yandex_verification !== undefined) updates.yandex_verification = yandex_verification;
+    if (baidu_verification !== undefined) updates.baidu_verification = baidu_verification;
+    if (pinterest_verification !== undefined) updates.pinterest_verification = pinterest_verification;
 
     const updatedUser = await db.updateUser(user.userId, updates);
     return NextResponse.json({ success: true, user: updatedUser });

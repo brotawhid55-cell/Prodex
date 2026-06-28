@@ -10,6 +10,11 @@ export interface User {
   bio: string;
   avatar_url: string;
   search_console_meta_tag: string | null;
+  google_verification?: string | null;
+  bing_verification?: string | null;
+  yandex_verification?: string | null;
+  baidu_verification?: string | null;
+  pinterest_verification?: string | null;
   created_at: string;
 }
 
@@ -76,6 +81,13 @@ export async function ensureDbInitialized() {
         UNIQUE(user_id, slug)
       );
     `;
+
+    // Alter users table to add verification columns if not exists
+    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS google_verification TEXT;`;
+    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS bing_verification TEXT;`;
+    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS yandex_verification TEXT;`;
+    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS baidu_verification TEXT;`;
+    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS pinterest_verification TEXT;`;
 
     // Check if demo user exists
     const rows = await sql`SELECT id FROM users WHERE LOWER(username) = LOWER(${"techcurator"}) LIMIT 1`;
@@ -189,6 +201,11 @@ export const db = {
       bio: updates.bio !== undefined ? updates.bio : currentUser.bio,
       avatar_url: updates.avatar_url !== undefined ? updates.avatar_url : currentUser.avatar_url,
       search_console_meta_tag: updates.search_console_meta_tag !== undefined ? updates.search_console_meta_tag : currentUser.search_console_meta_tag,
+      google_verification: updates.google_verification !== undefined ? updates.google_verification : currentUser.google_verification,
+      bing_verification: updates.bing_verification !== undefined ? updates.bing_verification : currentUser.bing_verification,
+      yandex_verification: updates.yandex_verification !== undefined ? updates.yandex_verification : currentUser.yandex_verification,
+      baidu_verification: updates.baidu_verification !== undefined ? updates.baidu_verification : currentUser.baidu_verification,
+      pinterest_verification: updates.pinterest_verification !== undefined ? updates.pinterest_verification : currentUser.pinterest_verification,
     };
 
     const rows = await sql`
@@ -200,7 +217,12 @@ export const db = {
         display_name = ${merged.display_name}, 
         bio = ${merged.bio}, 
         avatar_url = ${merged.avatar_url}, 
-        search_console_meta_tag = ${merged.search_console_meta_tag}
+        search_console_meta_tag = ${merged.search_console_meta_tag},
+        google_verification = ${merged.google_verification},
+        bing_verification = ${merged.bing_verification},
+        yandex_verification = ${merged.yandex_verification},
+        baidu_verification = ${merged.baidu_verification},
+        pinterest_verification = ${merged.pinterest_verification}
       WHERE id = ${id} 
       RETURNING *
     `;
@@ -208,7 +230,7 @@ export const db = {
   },
 
   // --- POSTS ---
-  async getPosts(options?: { search?: string; userId?: string }): Promise<Post[]> {
+  async getPosts(options?: { search?: string; userId?: string }): Promise<any[]> {
     await ensureDbInitialized();
     const sql = getSql();
     
@@ -217,15 +239,39 @@ export const db = {
 
     let rows;
     if (userId && search) {
-      rows = await sql`SELECT * FROM posts WHERE user_id = ${userId} AND LOWER(title) LIKE ${search} ORDER BY created_at DESC`;
+      rows = await sql`
+        SELECT posts.*, users.username, users.display_name, users.avatar_url 
+        FROM posts 
+        JOIN users ON posts.user_id = users.id 
+        WHERE posts.user_id = ${userId} AND LOWER(posts.title) LIKE ${search} 
+        ORDER BY posts.created_at DESC
+      `;
     } else if (userId) {
-      rows = await sql`SELECT * FROM posts WHERE user_id = ${userId} ORDER BY created_at DESC`;
+      rows = await sql`
+        SELECT posts.*, users.username, users.display_name, users.avatar_url 
+        FROM posts 
+        JOIN users ON posts.user_id = users.id 
+        WHERE posts.user_id = ${userId} 
+        ORDER BY posts.created_at DESC
+      `;
     } else if (search) {
-      rows = await sql`SELECT * FROM posts WHERE LOWER(title) LIKE ${search} ORDER BY created_at DESC`;
+      rows = await sql`
+        SELECT posts.*, users.username, users.display_name, users.avatar_url 
+        FROM posts 
+        JOIN users ON posts.user_id = users.id 
+        WHERE LOWER(posts.title) LIKE ${search} 
+        ORDER BY posts.created_at DESC
+      `;
     } else {
-      rows = await sql`SELECT * FROM posts ORDER BY created_at DESC`;
+      rows = await sql`
+        SELECT posts.*, users.username, users.display_name, users.avatar_url 
+        FROM posts 
+        JOIN users ON posts.user_id = users.id 
+        ORDER BY posts.created_at DESC 
+        LIMIT 50
+      `;
     }
-    return rows as Post[];
+    return rows;
   },
 
   async getPostBySlugAndUser(userId: string, slug: string): Promise<Post | null> {

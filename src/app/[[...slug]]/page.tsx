@@ -12,11 +12,18 @@ interface PageProps {
   };
 }
 
+function extractMetaContent(tagOrValue: string | null | undefined): string {
+  if (!tagOrValue) return "";
+  const trimmed = tagOrValue.trim();
+  if (trimmed.startsWith("<meta")) {
+    const match = trimmed.match(/content=["']([^"']+)["']/);
+    if (match && match[1]) return match[1];
+  }
+  return trimmed;
+}
+
 export async function generateMetadata({ params, searchParams }: PageProps): Promise<Metadata> {
   const slugArray = params.slug || [];
-  const isPostRoute = slugArray[0] === "post";
-  const postSlug = isPostRoute ? slugArray[1] : "";
-
   const cookieStore = cookies();
   const headerList = headers();
 
@@ -29,10 +36,37 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
     const domainParts = hostname.split(".");
     if (hostname.endsWith("localhost") && domainParts.length > 1) {
       subdomain = domainParts[0].toLowerCase();
-    } else if (hostname.endsWith("trodex.com") && domainParts.length > 2) {
+    } else if (
+      (hostname.endsWith("trodex.com") && domainParts.length > 2) ||
+      (hostname.endsWith("trodex.vercel.app") && domainParts.length > 3)
+    ) {
       subdomain = domainParts[0].toLowerCase();
     } else if (domainParts.length > 2 && !hostname.endsWith("run.app") && !hostname.endsWith("web.app") && !hostname.endsWith("vercel.app")) {
       subdomain = domainParts[0].toLowerCase();
+    }
+  }
+
+  // Handle subdomain and internal path resolution
+  let activeUsername = subdomain;
+  let isPost = false;
+  let activePostSlug = "";
+
+  if (slugArray.length > 0 && !["login", "register", "create-post", "settings"].includes(slugArray[0])) {
+    activeUsername = slugArray[0];
+    if (slugArray[1] === "post" && slugArray[2]) {
+      isPost = true;
+      activePostSlug = slugArray[2];
+    } else if (slugArray[1]) {
+      isPost = true;
+      activePostSlug = slugArray[1];
+    }
+  } else if (subdomain) {
+    if (slugArray[0] === "post" && slugArray[1]) {
+      isPost = true;
+      activePostSlug = slugArray[1];
+    } else if (slugArray[0] && !["login", "register", "create-post", "settings"].includes(slugArray[0])) {
+      isPost = true;
+      activePostSlug = slugArray[0];
     }
   }
 
@@ -40,34 +74,47 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
   let description = "Discover and shop highly curated, real user product recommendations, verified reviews, and top affiliate gear.";
   let imageUrl = "https://images.unsplash.com/photo-1511556532299-8f662fc26c06?auto=format&fit=crop&q=80&w=800";
   let canonicalUrl = `https://trodex.com/${slugArray.join("/")}`;
-  let verificationCode = "";
+  let otherMeta: any = {};
 
-  if (subdomain) {
+  if (activeUsername) {
     try {
-      const user = await db.getUserByUsername(subdomain);
+      const user = await db.getUserByUsername(activeUsername);
       if (user) {
-        if (user.search_console_meta_tag) {
-          const match = user.search_console_meta_tag.match(/content="([^"]+)"/);
-          if (match) {
-            verificationCode = match[1];
-          } else {
-            verificationCode = user.search_console_meta_tag;
-          }
+        // Build all verification tags
+        const googleCode = extractMetaContent(user.google_verification);
+        if (googleCode) otherMeta["google-site-verification"] = googleCode;
+
+        const bingCode = extractMetaContent(user.bing_verification);
+        if (bingCode) otherMeta["msvalidate.01"] = bingCode;
+
+        const yandexCode = extractMetaContent(user.yandex_verification);
+        if (yandexCode) otherMeta["yandex-verification"] = yandexCode;
+
+        const baiduCode = extractMetaContent(user.baidu_verification);
+        if (baiduCode) otherMeta["baidu-site-verification"] = baiduCode;
+
+        const pinCode = extractMetaContent(user.pinterest_verification);
+        if (pinCode) otherMeta["p:domain_verify"] = pinCode;
+
+        // Fallback to legacy
+        if (user.search_console_meta_tag && !googleCode) {
+          const legacyGoogle = extractMetaContent(user.search_console_meta_tag);
+          if (legacyGoogle) otherMeta["google-site-verification"] = legacyGoogle;
         }
 
-        if (isPostRoute && postSlug) {
-          const post = await db.getPostBySlugAndUser(user.id, postSlug);
+        if (isPost && activePostSlug) {
+          const post = await db.getPostBySlugAndUser(user.id, activePostSlug);
           if (post) {
-            title = `${post.title} - ${post.rating}★ | trodex`;
+            title = `${post.title} - ${post.rating}★ | Trodex`;
             description = post.meta_description;
             imageUrl = post.image_url;
-            canonicalUrl = `https://${subdomain}.trodex.com/post/${post.slug}`;
+            canonicalUrl = `https://${activeUsername}.trodex.com/post/${post.slug}`;
           }
         } else {
-          title = `${user.display_name}'s Products | trodex`;
+          title = `${user.display_name}'s Products | Trodex`;
           description = user.bio || `Explore handpicked products, custom reviews, and affiliate items curated by ${user.display_name} on Trodex.`;
           imageUrl = user.avatar_url;
-          canonicalUrl = `https://${subdomain}.trodex.com/`;
+          canonicalUrl = `https://${activeUsername}.trodex.com/`;
         }
       }
     } catch (err) {
@@ -86,14 +133,95 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
       description,
       images: [imageUrl],
       url: canonicalUrl,
-      type: isPostRoute ? "article" : "website",
+      type: (isPost ? "product" : "website") as any,
     },
-    other: verificationCode ? {
-      "google-site-verification": verificationCode
-    } : undefined
+    other: Object.keys(otherMeta).length > 0 ? otherMeta : undefined
   };
 }
 
-export default function CatchAllPage() {
-  return <ClientApp />;
+export default async function CatchAllPage({ params, searchParams }: PageProps) {
+  const slugArray = params.slug || [];
+  const cookieStore = cookies();
+  const headerList = headers();
+
+  // Determine active subdomain
+  let subdomain = searchParams?.subdomain || cookieStore.get("simulated_subdomain")?.value || null;
+
+  if (!subdomain) {
+    const host = headerList.get("host") || "";
+    const hostname = host.split(":")[0];
+    const domainParts = hostname.split(".");
+    if (hostname.endsWith("localhost") && domainParts.length > 1) {
+      subdomain = domainParts[0].toLowerCase();
+    } else if (
+      (hostname.endsWith("trodex.com") && domainParts.length > 2) ||
+      (hostname.endsWith("trodex.vercel.app") && domainParts.length > 3)
+    ) {
+      subdomain = domainParts[0].toLowerCase();
+    } else if (domainParts.length > 2 && !hostname.endsWith("run.app") && !hostname.endsWith("web.app") && !hostname.endsWith("vercel.app")) {
+      subdomain = domainParts[0].toLowerCase();
+    }
+  }
+
+  let activeUsername = subdomain;
+  let isPost = false;
+  let activePostSlug = "";
+
+  if (slugArray.length > 0 && !["login", "register", "create-post", "settings"].includes(slugArray[0])) {
+    activeUsername = slugArray[0];
+    if (slugArray[1] === "post" && slugArray[2]) {
+      isPost = true;
+      activePostSlug = slugArray[2];
+    } else if (slugArray[1]) {
+      isPost = true;
+      activePostSlug = slugArray[1];
+    }
+  } else if (subdomain) {
+    if (slugArray[0] === "post" && slugArray[1]) {
+      isPost = true;
+      activePostSlug = slugArray[1];
+    } else if (slugArray[0] && !["login", "register", "create-post", "settings"].includes(slugArray[0])) {
+      isPost = true;
+      activePostSlug = slugArray[0];
+    }
+  }
+
+  let postJsonLd = null;
+
+  if (activeUsername && isPost && activePostSlug) {
+    try {
+      const user = await db.getUserByUsername(activeUsername);
+      if (user) {
+        const post = await db.getPostBySlugAndUser(user.id, activePostSlug);
+        if (post) {
+          postJsonLd = {
+            "@context": "https://schema.org/",
+            "@type": "Product",
+            "name": post.title,
+            "description": post.meta_description,
+            "image": post.image_url,
+            "aggregateRating": {
+              "@type": "AggregateRating",
+              "ratingValue": String(post.rating),
+              "reviewCount": String(post.review_count)
+            }
+          };
+        }
+      }
+    } catch (err) {
+      console.error("Failed to generate JSON-LD schema:", err);
+    }
+  }
+
+  return (
+    <>
+      {postJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(postJsonLd) }}
+        />
+      )}
+      <ClientApp />
+    </>
+  );
 }

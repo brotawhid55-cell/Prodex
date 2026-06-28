@@ -107,7 +107,7 @@ export function FeedView({ onNavigateToPost, onNavigate }: FeedViewProps) {
             <ShoppingBag size={24} />
           </div>
           <div className="space-y-1">
-            <h3 className="font-black text-[#1A1A1A] text-lg">No products found</h3>
+            <h3 className="font-black text-[#1A1A1A] text-lg">No products yet</h3>
             <p className="text-xs text-gray-500 font-medium font-sans">
               We couldn't find any products matching your search. Try adding a new curation or exploring general tags.
             </p>
@@ -120,18 +120,15 @@ export function FeedView({ onNavigateToPost, onNavigate }: FeedViewProps) {
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-          {posts.map((post) => {
-            const userDetails = usersMap[post.user_id] || {
-              username: "techcurator",
-              display_name: "Tech Curator"
-            };
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+          {posts.map((post: any) => {
+            const postUsername = post.username || "techcurator";
             return (
               <PostCard
                 key={post.id}
                 post={post}
-                username={userDetails.username}
-                onNavigateToPost={(slug) => onNavigateToPost(userDetails.username, slug)}
+                username={postUsername}
+                onNavigateToPost={(slug) => onNavigateToPost(postUsername, slug)}
               />
             );
           })}
