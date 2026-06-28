@@ -1,0 +1,6 @@
+{
+  "name": "Trodex",
+  "description": "A dynamic social shopping and product review platform with custom user subdomains, SEO optimization, sitemaps, Google Search Console tag validation, and a sleek masonry grid interface.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
