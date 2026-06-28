@@ -31,9 +31,9 @@ export function PostCard({ post, username, onNavigateToPost }: PostCardProps) {
   const stars = [];
   for (let i = 1; i <= 5; i++) {
     if (i <= rounded) {
-      stars.push(<span key={i} className="text-yellow-400">★</span>);
+      stars.push(<span key={i} className="text-[#E0A900]">★</span>);
     } else {
-      stars.push(<span key={i} className="text-white/20">★</span>);
+      stars.push(<span key={i} className="text-[#857371]/30">★</span>);
     }
   }
 
@@ -45,80 +45,82 @@ export function PostCard({ post, username, onNavigateToPost }: PostCardProps) {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -15 }}
         whileHover={{ y: -4, transition: { duration: 0.15 } }}
-        className="relative group overflow-hidden bg-white rounded-2xl shadow-sm border border-gray-100 border-l-[3px] border-l-[#CC0000] flex flex-col justify-between h-[360px] md:h-[400px]"
-        style={{
-          backgroundImage: `url(${post.image_url})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
+        className="bg-[#FFF8F7] border border-[#857371]/20 rounded-[12px] shadow-sm flex flex-col overflow-hidden relative group h-[440px] md:h-[460px] justify-between"
       >
-        {/* Dark gradient overlay for extreme legibility */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/10 group-hover:from-black/95 transition-colors duration-200" />
+        {/* Top Image Container */}
+        <div className="h-44 md:h-48 w-full overflow-hidden relative bg-gray-100">
+          <img 
+            src={post.image_url} 
+            alt={post.title} 
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            referrerPolicy="no-referrer"
+          />
+          <span className="absolute top-3 left-3 text-[11px] font-mono font-bold tracking-wide bg-[#FFDAD6] text-[#410002] px-2.5 py-1 rounded-full shadow-sm">
+            @{username}
+          </span>
+        </div>
 
-        {/* Content Container (absolutely positioned over bg) */}
-        <div className="relative z-10 p-4 md:p-5 flex flex-col justify-between h-full w-full text-white">
-          {/* Top Info Overlay */}
-          <div className="flex justify-between items-center w-full bg-black/40 backdrop-blur-xs px-3 py-2 rounded-xl border border-white/10 shadow-sm">
-            <span className="text-[10px] md:text-xs font-mono font-bold tracking-wider uppercase bg-[#CC0000] text-white px-2.5 py-0.5 rounded-full shadow-sm">
-              @{username}
-            </span>
-            <div className="flex items-center gap-1 font-mono text-xs font-bold text-white">
-              <div className="flex gap-0.5">{stars}</div>
-              <span className="text-white font-bold text-xs ml-1">{post.rating.toFixed(1)}</span>
-              <span className="text-gray-300 font-normal text-[10px]">({post.review_count.toLocaleString()})</span>
+        {/* Content Body Container */}
+        <div className="p-4 flex-1 flex flex-col justify-between">
+          <div className="space-y-2">
+            {/* Rating / reviews row */}
+            <div className="flex items-center gap-1 font-mono text-xs font-bold text-[#1A1A1A]">
+              <div className="flex gap-0.5 text-sm">{stars}</div>
+              <span className="text-[#1A1A1A] font-bold text-xs ml-1">{post.rating.toFixed(1)}</span>
+              <span className="text-[#534341] font-normal text-[10px]">({post.review_count.toLocaleString()})</span>
             </div>
-          </div>
 
-          {/* Bottom Info & Buttons */}
-          <div className="space-y-3 mt-auto">
+            {/* Title */}
             <h3 
               onClick={() => onNavigateToPost?.(post.slug)}
-              className="text-lg md:text-xl font-black tracking-tight leading-tight cursor-pointer hover:text-red-400 line-clamp-2 transition-colors"
+              className="text-base md:text-lg font-bold tracking-tight text-[#1A1A1A] leading-snug cursor-pointer hover:text-[#CC0000] line-clamp-2 transition-colors duration-150"
             >
               {post.title}
             </h3>
             
-            <p className="text-xs text-gray-300 font-medium line-clamp-2 font-sans">
+            {/* Description */}
+            <p className="text-xs text-[#534341] font-normal line-clamp-2 leading-relaxed">
               {post.meta_description}
             </p>
+          </div>
 
-            <div className="grid grid-cols-2 gap-2 pt-1">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowModal(true);
-                }}
-                className="flex items-center justify-center gap-1.5 px-3 py-2.5 bg-[#1A1A1A] hover:bg-[#2A2A2A] text-white font-bold text-xs rounded-xl transition shadow"
-              >
-                <Info size={14} />
-                <span>About</span>
-              </button>
-              
-              <a
-                href={post.shop_url}
-                target="_blank"
-                referrerPolicy="no-referrer"
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                className="flex items-center justify-center gap-1.5 px-3 py-2.5 bg-[#CC0000] hover:bg-[#E60000] text-white font-bold text-xs rounded-xl transition shadow"
-              >
-                <ShoppingBag size={14} />
-                <span>Shop Now</span>
-              </a>
-            </div>
+          {/* Action Buttons (Material 3 Style) */}
+          <div className="grid grid-cols-2 gap-2 pt-2">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowModal(true);
+              }}
+              className="flex items-center justify-center gap-1.5 h-10 rounded-full border border-[#857371] hover:bg-[#CC0000]/8 active:bg-[#CC0000]/12 text-[#CC0000] font-bold text-xs transition duration-150"
+            >
+              <Info size={14} />
+              <span>About</span>
+            </button>
+            
+            <a
+              href={post.shop_url}
+              target="_blank"
+              referrerPolicy="no-referrer"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="flex items-center justify-center gap-1.5 h-10 rounded-full bg-[#CC0000] hover:bg-[#CC0000]/92 active:bg-[#CC0000]/88 text-[#FFFFFF] font-bold text-xs transition duration-150 shadow"
+            >
+              <ShoppingBag size={14} />
+              <span>Shop Now</span>
+            </a>
           </div>
         </div>
       </motion.div>
 
-      {/* About Modal */}
+      {/* About Modal (Redesigned with Material 3 Extra Large shape and Surface style) */}
       <AnimatePresence>
         {showModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-white rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl border border-gray-100 flex flex-col"
+              className="bg-[#FFF8F7] rounded-[28px] max-w-lg w-full overflow-hidden shadow-2xl border border-[#857371]/20 flex flex-col"
             >
               {/* Modal Banner Image */}
               <div 
@@ -129,27 +131,27 @@ export function PostCard({ post, username, onNavigateToPost }: PostCardProps) {
                   backgroundPosition: "center",
                 }}
               >
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
                 <div className="absolute bottom-4 left-4 right-4 text-white">
-                  <span className="text-[10px] font-mono font-bold tracking-widest uppercase bg-red-600 px-2 py-0.5 rounded-full">
+                  <span className="text-[11px] font-mono font-bold tracking-wider uppercase bg-[#FFDAD6] text-[#410002] px-2.5 py-1 rounded-full shadow">
                     Review by @{username}
                   </span>
-                  <h4 className="text-xl font-black mt-1 tracking-tight">{post.title}</h4>
+                  <h4 className="text-xl font-bold mt-2 tracking-tight">{post.title}</h4>
                 </div>
               </div>
 
               {/* Modal Body */}
               <div className="p-6 space-y-4">
-                <div className="flex justify-between items-center bg-gray-50 p-3 rounded-xl border border-gray-100">
+                <div className="flex justify-between items-center bg-[#F5DDDB] p-3 rounded-[12px] border border-[#857371]/10">
                   <StarRating rating={post.rating} count={post.review_count} />
-                  <span className="text-xs font-mono font-bold text-gray-500">
+                  <span className="text-xs font-mono font-medium text-[#534341]">
                     Added {new Date(post.created_at).toLocaleDateString()}
                   </span>
                 </div>
 
                 <div className="space-y-2">
-                  <h5 className="text-xs font-bold uppercase tracking-wider text-gray-400">Review Summary</h5>
-                  <p className="text-sm text-[#1A1A1A] leading-relaxed font-medium">
+                  <h5 className="text-[11px] font-bold uppercase tracking-wider text-[#857371]">Review Summary</h5>
+                  <p className="text-sm text-[#1A1A1A] leading-relaxed font-normal">
                     {post.about}
                   </p>
                 </div>
@@ -160,7 +162,7 @@ export function PostCard({ post, username, onNavigateToPost }: PostCardProps) {
                       setShowModal(false);
                       onNavigateToPost?.(post.slug);
                     }}
-                    className="flex items-center justify-center gap-1.5 px-4 py-3 border border-gray-200 hover:bg-gray-50 text-gray-800 font-bold text-xs rounded-xl transition"
+                    className="flex items-center justify-center gap-1.5 h-10 rounded-full border border-[#857371] hover:bg-[#CC0000]/8 active:bg-[#CC0000]/12 text-[#CC0000] font-bold text-xs transition duration-150"
                   >
                     <span>Full Review Page</span>
                     <ExternalLink size={14} />
@@ -171,7 +173,7 @@ export function PostCard({ post, username, onNavigateToPost }: PostCardProps) {
                     target="_blank"
                     referrerPolicy="no-referrer"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-1.5 px-4 py-3 bg-[#CC0000] hover:bg-[#E60000] text-white font-bold text-xs rounded-xl transition shadow-lg shadow-red-900/10"
+                    className="flex items-center justify-center gap-1.5 h-10 rounded-full bg-[#CC0000] hover:bg-[#CC0000]/92 active:bg-[#CC0000]/88 text-[#FFFFFF] font-bold text-xs transition duration-150 shadow"
                   >
                     <ShoppingBag size={14} />
                     <span>Shop Affiliate Link</span>
@@ -180,10 +182,10 @@ export function PostCard({ post, username, onNavigateToPost }: PostCardProps) {
               </div>
 
               {/* Close Bar */}
-              <div className="bg-gray-50 px-6 py-3 flex justify-end border-t border-gray-100">
+              <div className="bg-[#F5DDDB]/50 px-6 py-4 flex justify-end border-t border-[#857371]/10">
                 <button
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-1.5 bg-[#1A1A1A] hover:bg-gray-800 text-white text-xs font-bold rounded-lg transition"
+                  className="h-10 px-6 bg-[#1A1A1A] hover:bg-[#1A1A1A]/88 text-[#FFFFFF] text-xs font-bold rounded-full transition"
                 >
                   Close
                 </button>

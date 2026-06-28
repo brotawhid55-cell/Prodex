@@ -106,7 +106,7 @@ export function ClientApp() {
   const postSlug = isPostRoute ? currentPath.replace("/post/", "") : "";
 
   return (
-    <div className="min-h-screen bg-[#F5F0EB] text-[#1A1A1A] font-sans flex flex-col justify-between pb-16 md:pb-0">
+    <div className="min-h-screen bg-[#FFF8F7] text-[#1A1A1A] font-sans flex flex-col justify-between pb-16 md:pb-0">
       
       {/* Header component */}
       <Header
@@ -123,25 +123,25 @@ export function ClientApp() {
         {loadingContext ? (
           <div className="flex flex-col items-center justify-center py-24 gap-3">
             <Loader2 className="animate-spin text-[#CC0000]" size={42} />
-            <span className="text-xs font-mono font-bold text-gray-500 uppercase tracking-widest">
+            <span className="text-xs font-mono font-bold text-[#534341] uppercase tracking-widest">
               Initializing Trodex Environment...
             </span>
           </div>
         ) : dbError ? (
-          <div className="max-w-2xl mx-auto my-8 p-6 md:p-8 bg-[#1A1A1A] text-white rounded-2xl shadow-xl border border-red-900/40">
+          <div className="max-w-2xl mx-auto my-8 p-6 md:p-8 bg-[#FFF8F7] text-[#1A1A1A] rounded-[28px] shadow-sm border border-[#857371]/30">
             <div className="flex items-center gap-3 mb-4">
-              <span className="flex items-center justify-center bg-red-600/25 p-2 rounded-lg text-[#CC0000] font-bold text-lg">⚠️</span>
-              <h2 className="text-xl font-bold tracking-tight text-white">Database Connection Required</h2>
+              <span className="flex items-center justify-center bg-[#FFDAD6] p-2 rounded-lg text-[#CC0000] font-bold text-lg">⚠️</span>
+              <h2 className="text-xl font-bold tracking-tight text-[#1A1A1A]">Database Connection Required</h2>
             </div>
-            <p className="text-gray-300 text-sm leading-relaxed mb-6 whitespace-pre-line bg-black/40 p-4 rounded-xl border border-white/5 font-mono">
+            <p className="text-[#534341] text-sm leading-relaxed mb-6 whitespace-pre-line bg-[#EDEDED]/50 p-4 rounded-xl border border-[#857371]/20 font-mono">
               {dbError}
             </p>
-            <div className="border-t border-gray-800 pt-6">
-              <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-3">How to Resolve This:</h3>
-              <ol className="space-y-3 text-xs text-gray-400 list-decimal pl-4">
+            <div className="border-t border-[#857371]/20 pt-6">
+              <h3 className="text-sm font-bold text-[#1A1A1A] uppercase tracking-wider mb-3">How to Resolve This:</h3>
+              <ol className="space-y-3 text-xs text-[#534341] list-decimal pl-4">
                 <li>Go to <a href="https://neon.tech" target="_blank" rel="noopener noreferrer" className="text-[#CC0000] underline hover:text-red-400">neon.tech</a> and create a free PostgreSQL database.</li>
                 <li>Copy the connection string (pooled connection string is recommended).</li>
-                <li>Add it as <code className="bg-gray-800 text-gray-200 px-1.5 py-0.5 rounded font-mono text-[11px]">DATABASE_URL</code> to your environment variables (in <code className="bg-gray-800 text-gray-200 px-1.5 py-0.5 rounded font-mono text-[11px]">.env.local</code> for local dev, or in Vercel settings for production).</li>
+                <li>Add it as <code className="bg-[#EDEDED] text-[#1A1A1A] px-1.5 py-0.5 rounded font-mono text-[11px]">DATABASE_URL</code> to your environment variables (in <code className="bg-[#EDEDED] text-[#1A1A1A] px-1.5 py-0.5 rounded font-mono text-[11px]">.env.local</code> for local dev, or in Vercel settings for production).</li>
                 <li>Refresh the page to automatically bootstrap and seed your database!</li>
               </ol>
             </div>
@@ -180,18 +180,18 @@ export function ClientApp() {
                 ) : (
                   /* Subdomain User Not Found */
                   <div className="max-w-md mx-auto py-20 text-center space-y-4">
-                    <div className="bg-amber-50 text-amber-500 p-4 rounded-full w-fit mx-auto">
+                    <div className="bg-[#FFDAD6] text-[#CC0000] p-4 rounded-full w-fit mx-auto">
                       <Store size={32} />
                     </div>
                     <div>
-                      <h3 className="text-xl font-black uppercase">Store Not Found</h3>
-                      <p className="text-xs text-gray-500 font-sans mt-1">
+                      <h3 className="text-xl font-bold uppercase">Store Not Found</h3>
+                      <p className="text-xs text-[#534341] mt-1">
                         The store subdomain <span className="font-bold">@{subdomain}</span> has not been registered yet on Trodex.
                       </p>
                     </div>
                     <button
                       onClick={() => handleSimulateSubdomain(null)}
-                      className="px-5 py-2.5 bg-[#1A1A1A] hover:bg-gray-800 text-white text-xs font-bold rounded-xl transition"
+                      className="h-10 px-6 rounded-full border border-[#857371] hover:bg-[#CC0000]/8 text-[#1A1A1A] text-xs font-semibold transition"
                     >
                       Return to Main Feed
                     </button>
@@ -265,10 +265,10 @@ export function ClientApp() {
                       );
                     case "/about":
                       return (
-                        <div className="max-w-2xl mx-auto bg-white p-6 md:p-8 rounded-3xl border border-gray-100 shadow-sm space-y-4">
-                          <h2 className="text-3xl font-black text-[#1A1A1A] uppercase tracking-tight">About <span className="text-[#CC0000]">Trodex</span></h2>
-                          <p className="text-xs text-gray-500 font-medium uppercase font-mono tracking-wider">The Decentralized Creator Storefront</p>
-                          <div className="text-sm text-gray-600 space-y-4 leading-relaxed font-medium">
+                        <div className="max-w-2xl mx-auto bg-[#FFF8F7] p-6 md:p-8 rounded-[28px] border border-[#857371]/20 shadow-sm space-y-4">
+                          <h2 className="text-2xl font-bold text-[#1A1A1A] uppercase tracking-tight">About <span className="text-[#CC0000]">Trodex</span></h2>
+                          <p className="text-xs text-[#534341] font-semibold uppercase tracking-wider">The Decentralized Creator Storefront</p>
+                          <div className="text-sm text-[#534341] space-y-4 leading-relaxed font-normal text-left">
                             <p>
                               Trodex empowers product curators, reviewers, and affiliate marketers to claim their own distinct brand subdomain and curate their favorite gear in seconds.
                             </p>
@@ -280,10 +280,10 @@ export function ClientApp() {
                       );
                     case "/privacy":
                       return (
-                        <div className="max-w-2xl mx-auto bg-white p-6 md:p-8 rounded-3xl border border-gray-100 shadow-sm space-y-4">
-                          <h2 className="text-3xl font-black text-[#1A1A1A] uppercase tracking-tight">Privacy <span className="text-[#CC0000]">Policy</span></h2>
-                          <p className="text-xs text-gray-500 font-medium uppercase font-mono tracking-wider">Last updated: June 2026</p>
-                          <div className="text-sm text-gray-600 space-y-4 leading-relaxed font-medium">
+                        <div className="max-w-2xl mx-auto bg-[#FFF8F7] p-6 md:p-8 rounded-[28px] border border-[#857371]/20 shadow-sm space-y-4">
+                          <h2 className="text-2xl font-bold text-[#1A1A1A] uppercase tracking-tight">Privacy <span className="text-[#CC0000]">Policy</span></h2>
+                          <p className="text-xs text-[#534341] font-semibold uppercase tracking-wider">Last updated: June 2026</p>
+                          <div className="text-sm text-[#534341] space-y-4 leading-relaxed font-normal text-left">
                             <p>
                               Your privacy is important to us. Trodex does not track your keystrokes, sell your product curation lists, or monitor external referrer routes beyond standard session validation cookies.
                             </p>
@@ -295,10 +295,10 @@ export function ClientApp() {
                       );
                     case "/terms":
                       return (
-                        <div className="max-w-2xl mx-auto bg-white p-6 md:p-8 rounded-3xl border border-gray-100 shadow-sm space-y-4">
-                          <h2 className="text-3xl font-black text-[#1A1A1A] uppercase tracking-tight">Terms of <span className="text-[#CC0000]">Service</span></h2>
-                          <p className="text-xs text-gray-500 font-medium uppercase font-mono tracking-wider">Last updated: June 2026</p>
-                          <div className="text-sm text-gray-600 space-y-4 leading-relaxed font-medium">
+                        <div className="max-w-2xl mx-auto bg-[#FFF8F7] p-6 md:p-8 rounded-[28px] border border-[#857371]/20 shadow-sm space-y-4">
+                          <h2 className="text-2xl font-bold text-[#1A1A1A] uppercase tracking-tight">Terms of <span className="text-[#CC0000]">Service</span></h2>
+                          <p className="text-xs text-[#534341] font-semibold uppercase tracking-wider">Last updated: June 2026</p>
+                          <div className="text-sm text-[#534341] space-y-4 leading-relaxed font-normal text-left">
                             <p>
                               By registering a custom subdomain, you agree not to post malicious redirects, fraudulent reviews, or violate any trade laws with illegal affiliate networks.
                             </p>
@@ -311,10 +311,10 @@ export function ClientApp() {
                     default:
                       return (
                         <div className="text-center py-20 space-y-3">
-                          <h2 className="text-2xl font-black uppercase">Page Not Found</h2>
+                          <h2 className="text-2xl font-bold uppercase">Page Not Found</h2>
                           <button
                             onClick={() => navigateTo("/")}
-                            className="px-4 py-2 bg-[#CC0000] text-white font-bold text-xs rounded-xl"
+                            className="h-10 px-6 rounded-full bg-[#CC0000] hover:bg-[#CC0000]/92 active:bg-[#CC0000]/88 text-[#FFFFFF] font-semibold text-xs"
                           >
                             Go Home
                           </button>
@@ -329,8 +329,8 @@ export function ClientApp() {
       </main>
 
       {/* Footer component with static links */}
-      <footer className="w-full bg-[#1A1A1A] border-t border-gray-800 text-gray-400 py-6 px-4 md:px-8 mt-12 mb-16 md:mb-0">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-medium">
+      <footer className="w-full bg-[#EDEDED] border-t border-[#857371]/20 text-[#534341] py-6 px-4 md:px-8 mt-12 mb-16 md:mb-0">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-semibold">
           <div>
             &copy; {new Date().getFullYear()} Trodex. All rights reserved.
           </div>

@@ -11,17 +11,17 @@ export function StarRating({ rating, count }: StarRatingProps) {
   
   for (let i = 1; i <= 5; i++) {
     if (i <= rounded) {
-      stars.push(<span key={i} className="text-yellow-400 text-lg">★</span>);
+      stars.push(<span key={i} className="text-[#E0A900] text-lg">★</span>);
     } else {
-      stars.push(<span key={i} className="text-gray-300 text-lg">☆</span>);
+      stars.push(<span key={i} className="text-[#857371]/30 text-lg">☆</span>);
     }
   }
 
   return (
-    <div className="flex items-center gap-1.5 font-mono text-xs font-bold text-[#1A1A1A]">
+    <div className="flex items-center gap-1.5 font-mono text-xs font-medium text-[#1A1A1A]">
       <div className="flex gap-0.5">{stars}</div>
-      <span className="bg-yellow-100 px-1.5 py-0.5 rounded text-yellow-800 text-[10px] uppercase tracking-wider">{rating.toFixed(1)}</span>
-      <span className="text-gray-500 font-normal">({count.toLocaleString()} reviews)</span>
+      <span className="bg-[#FFDAD6] text-[#410002] px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">{rating.toFixed(1)}</span>
+      <span className="text-[#534341] font-normal">({count.toLocaleString()} reviews)</span>
     </div>
   );
 }

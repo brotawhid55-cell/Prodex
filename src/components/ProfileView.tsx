@@ -81,62 +81,62 @@ export function ProfileView({
   };
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto px-4 md:px-8 py-6">
-      {/* Profile Banner Card */}
-      <div className="bg-white rounded-3xl border border-gray-100 p-6 md:p-10 shadow-sm relative overflow-hidden">
-        {/* Subtle Brand Background Accent */}
-        <div className="absolute right-0 top-0 h-48 w-48 bg-red-500/5 rounded-full blur-3xl" />
+    <div className="space-y-8 max-w-4xl mx-auto px-4 py-6">
+      {/* Profile Banner Card (Material 3 style) */}
+      <div className="bg-[#FFF8F7] rounded-[28px] border border-[#857371]/20 p-6 md:p-8 shadow-sm relative overflow-hidden">
+        <div className="absolute right-0 top-0 h-48 w-48 bg-[#CC0000]/5 rounded-full blur-3xl" />
 
-        <div className="flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-8 relative z-10">
-          {/* Avatar with Custom Ring */}
-          <div className="relative group">
-            <div className="absolute -inset-1.5 bg-gradient-to-tr from-[#CC0000] to-orange-500 rounded-3xl blur opacity-30 group-hover:opacity-40 transition" />
+        <div className="flex flex-col md:flex-row items-center md:items-start gap-6 relative z-10">
+          {/* Avatar (56px circle - which matches h-14 w-14) */}
+          <div className="relative shrink-0">
             <img
               src={subdomainUser?.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${subdomain}`}
               alt={subdomainUser?.display_name || subdomain}
-              className="relative h-24 w-24 md:h-28 md:w-28 rounded-2xl object-cover border-4 border-white shadow-md bg-gray-50"
+              className="h-14 w-14 rounded-full object-cover border-2 border-[#857371]/30 bg-gray-50 shadow-sm"
             />
           </div>
 
           {/* Profile Details */}
-          <div className="flex-1 text-center md:text-left space-y-4">
+          <div className="flex-1 text-center md:text-left space-y-3">
             <div className="space-y-1">
               <div className="flex flex-col md:flex-row md:items-center gap-2 justify-center md:justify-start">
-                <h2 className="text-2xl md:text-3xl font-black text-[#1A1A1A] tracking-tight uppercase">
+                <h2 className="text-xl md:text-2xl font-bold text-[#1A1A1A] tracking-tight uppercase">
                   {subdomainUser?.display_name || subdomain}
                 </h2>
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-red-100 text-[#CC0000] text-[10px] font-mono font-bold rounded-full uppercase tracking-wider mx-auto md:mx-0 w-fit">
-                  <Globe size={10} className="animate-spin-slow" />
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-[#FFDAD6] text-[#CC0000] text-[10px] font-mono font-bold rounded-full uppercase tracking-wider mx-auto md:mx-0 w-fit">
+                  <Globe size={10} />
                   Verified Store
                 </span>
               </div>
-              <span className="font-mono text-xs font-bold text-gray-400 lowercase">
+              <span className="font-mono text-xs text-[#534341] lowercase">
                 @{subdomain}
               </span>
             </div>
 
-            <p className="text-sm text-gray-600 font-medium font-sans max-w-2xl leading-relaxed">
+            <p className="text-sm text-[#534341] font-normal leading-relaxed max-w-2xl">
               {subdomainUser?.bio || "No biography details configured yet."}
             </p>
 
-            {/* Quick Stats Bar */}
-            <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-xs font-mono font-bold text-[#1A1A1A] bg-gray-50 p-3 rounded-xl border border-gray-100 w-fit">
-              <div>
-                Posts: <span className="text-[#CC0000]">{posts.length}</span>
+            {/* Quick Stats Row & Assist Chip */}
+            <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
+              {/* Stats pill (Surface Variant) */}
+              <div className="inline-flex items-center px-4 py-1.5 bg-[#F5DDDB] text-[#534341] text-xs font-semibold rounded-full shadow-xs">
+                Posts: <span className="text-[#CC0000] ml-1">{posts.length}</span>
               </div>
-              <span className="text-gray-300">|</span>
+
+              {/* Assist Chip: outlined, 8px radius */}
               <button 
                 onClick={copyStoreLink}
-                className="flex items-center gap-1 hover:text-[#CC0000] transition active:scale-95"
+                className="inline-flex items-center gap-1.5 h-8 px-3 border border-[#857371] hover:bg-[#CC0000]/8 active:bg-[#CC0000]/12 text-[#1A1A1A] text-xs font-medium rounded-[8px] transition active:scale-95"
               >
                 {copiedStoreLink ? (
                   <>
-                    <Check size={14} className="text-green-500" />
-                    <span className="text-green-600 font-black">Copied link!</span>
+                    <Check size={12} className="text-green-600 animate-pulse" />
+                    <span className="text-green-700 font-bold">Copied!</span>
                   </>
                 ) : (
                   <>
-                    <Copy size={14} />
+                    <Copy size={12} className="text-[#CC0000]" />
                     <span>Store: {subdomain}.trodex.com</span>
                   </>
                 )}
@@ -148,7 +148,7 @@ export function ProfileView({
           {isOwner && (
             <button
               onClick={() => onNavigate("/settings")}
-              className="flex items-center gap-1.5 px-4 py-2.5 bg-[#1A1A1A] hover:bg-gray-800 text-white font-bold text-xs rounded-xl transition shadow-md md:self-start"
+              className="flex items-center gap-2 h-10 px-5 bg-[#CC0000] hover:bg-[#CC0000]/92 active:bg-[#CC0000]/88 text-[#FFFFFF] font-bold text-xs rounded-full transition shadow md:self-start"
             >
               <Settings size={14} />
               <span>Customize Store</span>
@@ -159,38 +159,39 @@ export function ProfileView({
 
       {/* Owner-Only Google Search Console Head Injection tool */}
       {isOwner && (
-        <div className="bg-white rounded-2xl border border-dashed border-red-200 p-5 md:p-6 space-y-4">
-          <div className="flex items-center gap-2">
-            <div className="bg-red-50 p-2 rounded-xl text-[#CC0000]">
+        <div className="bg-[#FFF8F7] rounded-[28px] border border-dashed border-[#CC0000]/30 p-5 md:p-6 space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="bg-[#FFDAD6] p-2.5 rounded-xl text-[#CC0000]">
               <ShieldCheck size={20} />
             </div>
             <div>
-              <h3 className="font-black text-sm uppercase tracking-tight text-[#1A1A1A]">
+              <h3 className="font-bold text-sm uppercase tracking-tight text-[#1A1A1A]">
                 Google Search Console Head Verification
               </h3>
-              <p className="text-[11px] text-gray-500 font-medium font-sans">
-                Claim your domain's indexing directly! The HTML tag will appear in your profile's <code className="font-mono bg-gray-100 px-1 py-0.5 rounded">&lt;head&gt;</code> source automatically.
+              <p className="text-[11px] text-[#534341] font-normal leading-relaxed">
+                Claim your domain's indexing directly! The HTML tag will appear in your profile's <code className="font-mono bg-[#F5DDDB] px-1 py-0.5 rounded text-[#410002]">&lt;head&gt;</code> source automatically.
               </p>
             </div>
           </div>
 
           <form onSubmit={handleSaveVerificationTag} className="flex flex-col md:flex-row gap-3 items-end">
-            <div className="flex-1 w-full space-y-1.5">
-              <label className="text-[10px] font-mono font-bold text-gray-400 uppercase">
+            <div className="flex-1 w-full space-y-1.5 text-left">
+              <label className="text-[10px] font-mono font-bold text-[#857371] uppercase">
                 Verification Meta Tag From Google
               </label>
+              {/* Outlined Text Field */}
               <textarea
                 placeholder='<meta name="google-site-verification" content="xxx"/>'
                 value={verificationTag}
                 onChange={(e) => setVerificationTag(e.target.value)}
-                className="w-full px-4 py-2.5 bg-gray-50 border-2 border-gray-100 focus:border-[#CC0000] focus:bg-white rounded-xl text-xs font-mono text-gray-700 transition focus:outline-none min-h-[50px]"
+                className="w-full px-4 py-3 bg-transparent border border-[#857371] focus:border-[#CC0000] rounded-[4px] text-xs font-mono text-[#1A1A1A] transition focus:outline-none min-h-[56px] placeholder-[#857371]/60"
               />
             </div>
             
             <button
               type="submit"
               disabled={savingTag}
-              className="px-5 py-3 bg-[#CC0000] hover:bg-[#E60000] disabled:bg-gray-400 text-white font-bold text-xs rounded-xl transition shadow-md w-full md:w-auto shrink-0 flex items-center justify-center gap-1.5"
+              className="h-10 px-5 bg-[#CC0000] hover:bg-[#CC0000]/92 active:bg-[#CC0000]/88 disabled:bg-gray-400 text-[#FFFFFF] font-bold text-xs rounded-full transition shadow shrink-0 flex items-center justify-center gap-1.5 w-full md:w-auto"
             >
               {savingTag ? (
                 <>
@@ -224,26 +225,27 @@ export function ProfileView({
 
       {/* Grid of posts */}
       <div className="space-y-6">
-        <h3 className="text-xl font-black text-[#1A1A1A] tracking-tight uppercase border-b border-gray-100 pb-3 flex items-center gap-2">
-          <ShoppingBag size={18} className="text-[#CC0000]" />
-          <span>Curated Reviews</span>
+        {/* CURATED REVIEWS Section Header: Label Large, On Surface Variant */}
+        <h3 className="text-sm font-semibold text-[#534341] uppercase tracking-wider border-b border-[#857371]/20 pb-3 flex items-center gap-2">
+          <ShoppingBag size={16} className="text-[#CC0000]" />
+          <span>CURATED REVIEWS</span>
         </h3>
 
         {loading ? (
           <div className="flex flex-col items-center justify-center py-16 gap-3">
             <Loader2 className="animate-spin text-[#CC0000]" size={36} />
-            <span className="text-xs font-mono font-bold text-gray-500 uppercase">
+            <span className="text-xs font-mono font-bold text-[#534341] uppercase">
               Fetching store items...
             </span>
           </div>
         ) : posts.length === 0 ? (
-          <div className="bg-white border border-gray-100 rounded-2xl p-12 text-center max-w-sm mx-auto space-y-4">
-            <div className="bg-gray-50 text-gray-400 p-4 rounded-full w-fit mx-auto">
+          <div className="bg-[#FFF8F7] border border-[#857371]/20 rounded-[28px] p-12 text-center max-w-sm mx-auto space-y-4 shadow-xs">
+            <div className="bg-[#F5DDDB] text-[#534341] p-4 rounded-full w-fit mx-auto">
               <Globe size={24} />
             </div>
             <div>
               <h4 className="font-bold text-[#1A1A1A]">No items listed</h4>
-              <p className="text-xs text-gray-500 font-sans mt-1">
+              <p className="text-xs text-[#534341] mt-1">
                 {isOwner 
                   ? "You haven't posted any curated items yet. Click create post to start!" 
                   : "This curator hasn't listed any recommendations yet."}
@@ -252,7 +254,7 @@ export function ProfileView({
             {isOwner && (
               <button
                 onClick={() => onNavigate("/create-post")}
-                className="px-4 py-2 bg-[#CC0000] hover:bg-[#E60000] text-white font-bold text-xs rounded-xl transition"
+                className="h-10 px-5 rounded-full bg-[#CC0000] hover:bg-[#CC0000]/92 text-[#FFFFFF] font-bold text-xs transition shadow"
               >
                 Create First Post
               </button>
@@ -274,4 +276,5 @@ export function ProfileView({
     </div>
   );
 }
+
 export default ProfileView;

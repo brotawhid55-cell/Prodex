@@ -103,35 +103,35 @@ export function CreatePostView({ onNavigate, onPostCreated }: CreatePostViewProp
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 md:px-8 py-6 space-y-6">
+    <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
       {/* Back button */}
       <button
         onClick={() => onNavigate("/")}
-        className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#1A1A1A] hover:text-[#CC0000] transition bg-white px-4 py-2 rounded-xl border border-gray-100 shadow-sm"
+        className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#1A1A1A] hover:text-[#CC0000] transition h-10 px-4 bg-[#FFF8F7] rounded-full border border-[#857371] shadow-sm animate-fade-in"
       >
         <ArrowLeft size={14} />
         <span>Back to Feed</span>
       </button>
 
       {/* Main Creation Card */}
-      <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-6 md:p-8">
-        <div className="space-y-1 border-b border-gray-100 pb-5">
-          <h2 className="text-2xl md:text-3xl font-black text-[#1A1A1A] tracking-tight uppercase">
+      <div className="bg-[#FFF8F7] rounded-[28px] border border-[#857371]/20 shadow-sm p-6 md:p-8">
+        <div className="space-y-1 border-b border-[#857371]/20 pb-5 text-left">
+          <h2 className="text-xl md:text-2xl font-bold text-[#1A1A1A] tracking-tight uppercase">
             Create <span className="text-[#CC0000]">New Curation</span>
           </h2>
-          <p className="text-xs text-gray-500 font-medium font-sans">
+          <p className="text-xs text-[#534341] font-normal">
             Post an affiliate, review, or custom recommended product directly on your store's feed.
           </p>
         </div>
 
         {success ? (
           <div className="text-center py-16 space-y-4">
-            <div className="bg-green-50 text-green-500 p-4 rounded-full w-fit mx-auto shadow-sm">
+            <div className="bg-[#FFDAD6] text-[#CC0000] p-4 rounded-full w-fit mx-auto shadow-sm">
               <Check size={32} className="animate-bounce" />
             </div>
             <div>
-              <h3 className="text-xl font-black text-[#1A1A1A]">CURATION LIVE!</h3>
-              <p className="text-xs text-gray-500 font-sans mt-1">
+              <h3 className="text-lg font-bold text-[#1A1A1A] uppercase">CURATION LIVE!</h3>
+              <p className="text-xs text-[#534341] mt-1">
                 Your post is saved and live. Redirecting you to your store profile feed...
               </p>
             </div>
@@ -139,12 +139,12 @@ export function CreatePostView({ onNavigate, onPostCreated }: CreatePostViewProp
         ) : (
           <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6">
             {/* Left inputs */}
-            <div className="space-y-4">
+            <div className="space-y-4 text-left">
               {/* Title */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-[#1A1A1A] uppercase tracking-wide flex justify-between">
+                <label className="text-[11px] font-bold text-[#534341] uppercase tracking-wide flex justify-between">
                   <span>Product Title</span>
-                  <span className="font-mono font-medium text-gray-400 text-[10px] lowercase">
+                  <span className="font-mono font-medium text-[#857371] text-[10px] lowercase">
                     {title.length}/100 max
                   </span>
                 </label>
@@ -153,11 +153,11 @@ export function CreatePostView({ onNavigate, onPostCreated }: CreatePostViewProp
                   placeholder="e.g. Mechanical Keyboard Pro"
                   value={title}
                   onChange={(e) => setTitle(e.target.value.slice(0, 100))}
-                  className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200/80 focus:border-[#CC0000] focus:bg-white rounded-xl text-xs font-bold text-[#1A1A1A] transition focus:outline-none"
+                  className="w-full h-14 px-4 bg-transparent border border-[#857371] focus:border-[#CC0000] rounded-[4px] text-sm text-[#1A1A1A] transition focus:outline-none placeholder-[#857371]/50"
                   required
                 />
                 {generatedSlug && (
-                  <p className="text-[10px] font-mono text-gray-400">
+                  <p className="text-[10px] font-mono text-[#534341]">
                     Auto-generated URL slug: <span className="text-[#CC0000] font-bold">/{generatedSlug}</span>
                   </p>
                 )}
@@ -165,9 +165,9 @@ export function CreatePostView({ onNavigate, onPostCreated }: CreatePostViewProp
 
               {/* Meta Description */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-[#1A1A1A] uppercase tracking-wide flex justify-between">
+                <label className="text-[11px] font-bold text-[#534341] uppercase tracking-wide flex justify-between">
                   <span>Meta Description</span>
-                  <span className={`font-mono text-[10px] font-bold ${metaDescription.length > 160 ? "text-red-500" : "text-gray-400"}`}>
+                  <span className={`font-mono text-[10px] ${metaDescription.length > 160 ? "text-[#B3261E] font-bold" : "text-[#534341]"}`}>
                     {metaDescription.length}/160 characters
                   </span>
                 </label>
@@ -175,16 +175,16 @@ export function CreatePostView({ onNavigate, onPostCreated }: CreatePostViewProp
                   placeholder="Describe your review in one catchy sentence. Used for SEO and summaries."
                   value={metaDescription}
                   onChange={(e) => setMetaDescription(e.target.value.slice(0, 160))}
-                  className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200/80 focus:border-[#CC0000] focus:bg-white rounded-xl text-xs font-medium text-[#1A1A1A] transition focus:outline-none min-h-[70px] resize-none"
+                  className="w-full px-4 py-3 bg-transparent border border-[#857371] focus:border-[#CC0000] rounded-[4px] text-sm text-[#1A1A1A] transition focus:outline-none min-h-[76px] resize-none placeholder-[#857371]/50"
                   required
                 />
               </div>
 
               {/* Curation Description (About) */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-[#1A1A1A] uppercase tracking-wide flex justify-between">
+                <label className="text-[11px] font-bold text-[#534341] uppercase tracking-wide flex justify-between">
                   <span>Curation Review (About)</span>
-                  <span className={`font-mono text-[10px] font-bold ${about.length > 1000 ? "text-red-500" : "text-gray-400"}`}>
+                  <span className={`font-mono text-[10px] ${about.length > 1000 ? "text-[#B3261E] font-bold" : "text-[#534341]"}`}>
                     {about.length}/1000 characters
                   </span>
                 </label>
@@ -192,7 +192,7 @@ export function CreatePostView({ onNavigate, onPostCreated }: CreatePostViewProp
                   placeholder="Share your detailed personal experience. Why do you recommend it? What are the pros and cons?"
                   value={about}
                   onChange={(e) => setAbout(e.target.value.slice(0, 1000))}
-                  className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200/80 focus:border-[#CC0000] focus:bg-white rounded-xl text-xs font-medium text-[#1A1A1A] transition focus:outline-none min-h-[140px] resize-y"
+                  className="w-full px-4 py-3 bg-transparent border border-[#857371] focus:border-[#CC0000] rounded-[4px] text-sm text-[#1A1A1A] transition focus:outline-none min-h-[140px] resize-y placeholder-[#857371]/50"
                   required
                 />
               </div>
@@ -200,7 +200,7 @@ export function CreatePostView({ onNavigate, onPostCreated }: CreatePostViewProp
               {/* Ratings and Reviews count */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-[#1A1A1A] uppercase tracking-wide">
+                  <label className="text-[11px] font-bold text-[#534341] uppercase tracking-wide">
                     Rating (1.0 - 5.0)
                   </label>
                   <input
@@ -210,13 +210,13 @@ export function CreatePostView({ onNavigate, onPostCreated }: CreatePostViewProp
                     max="5.0"
                     value={rating}
                     onChange={(e) => setRating(e.target.value)}
-                    className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200/80 focus:border-[#CC0000] focus:bg-white rounded-xl text-xs font-bold text-[#1A1A1A] transition focus:outline-none"
+                    className="w-full h-14 px-4 bg-transparent border border-[#857371] focus:border-[#CC0000] rounded-[4px] text-sm text-[#1A1A1A] transition focus:outline-none placeholder-[#857371]/50"
                     required
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-[#1A1A1A] uppercase tracking-wide">
+                  <label className="text-[11px] font-bold text-[#534341] uppercase tracking-wide">
                     Review Count Log
                   </label>
                   <input
@@ -224,7 +224,7 @@ export function CreatePostView({ onNavigate, onPostCreated }: CreatePostViewProp
                     min="0"
                     value={reviewCount}
                     onChange={(e) => setReviewCount(e.target.value)}
-                    className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200/80 focus:border-[#CC0000] focus:bg-white rounded-xl text-xs font-bold text-[#1A1A1A] transition focus:outline-none"
+                    className="w-full h-14 px-4 bg-transparent border border-[#857371] focus:border-[#CC0000] rounded-[4px] text-sm text-[#1A1A1A] transition focus:outline-none placeholder-[#857371]/50"
                     required
                   />
                 </div>
@@ -232,11 +232,11 @@ export function CreatePostView({ onNavigate, onPostCreated }: CreatePostViewProp
             </div>
 
             {/* Right inputs & image preview */}
-            <div className="space-y-4 flex flex-col justify-between">
+            <div className="space-y-4 flex flex-col justify-between text-left">
               <div className="space-y-4">
                 {/* Image URL */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-[#1A1A1A] uppercase tracking-wide">
+                  <label className="text-[11px] font-bold text-[#534341] uppercase tracking-wide">
                     Product Image URL
                   </label>
                   <input
@@ -244,17 +244,17 @@ export function CreatePostView({ onNavigate, onPostCreated }: CreatePostViewProp
                     placeholder="https://images.unsplash.com/... or similar"
                     value={imageUrl}
                     onChange={(e) => setImageUrl(e.target.value)}
-                    className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200/80 focus:border-[#CC0000] focus:bg-white rounded-xl text-xs font-bold text-[#1A1A1A] transition focus:outline-none"
+                    className="w-full h-14 px-4 bg-transparent border border-[#857371] focus:border-[#CC0000] rounded-[4px] text-sm text-[#1A1A1A] transition focus:outline-none placeholder-[#857371]/50"
                     required
                   />
                 </div>
 
                 {/* Live Image Preview Area */}
                 <div className="space-y-1.5">
-                  <span className="text-xs font-bold text-[#1A1A1A] uppercase tracking-wide block">
+                  <span className="text-[11px] font-bold text-[#534341] uppercase tracking-wide block">
                     Live Banner Preview
                   </span>
-                  <div className="h-[180px] w-full rounded-2xl overflow-hidden border-2 border-dashed border-gray-200 flex items-center justify-center bg-gray-50 relative">
+                  <div className="h-[180px] w-full rounded-[12px] overflow-hidden border border-dashed border-[#857371]/40 flex items-center justify-center bg-[#F5DDDB]/20 relative">
                     {imageUrl ? (
                       <img
                         src={imageUrl}
@@ -262,11 +262,10 @@ export function CreatePostView({ onNavigate, onPostCreated }: CreatePostViewProp
                         className="w-full h-full object-cover"
                         onError={(e) => {
                           (e.target as HTMLImageElement).src = "";
-                          // trigger error fallback
                         }}
                       />
                     ) : (
-                      <div className="text-center text-gray-400 space-y-1">
+                      <div className="text-center text-[#857371] space-y-1.5">
                         <ImageIcon size={28} className="mx-auto" />
                         <span className="text-[10px] font-mono font-bold block">No image provided</span>
                       </div>
@@ -276,7 +275,7 @@ export function CreatePostView({ onNavigate, onPostCreated }: CreatePostViewProp
 
                 {/* Shop Link URL */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-[#1A1A1A] uppercase tracking-wide">
+                  <label className="text-[11px] font-bold text-[#534341] uppercase tracking-wide">
                     Shop / Affiliate URL link
                   </label>
                   <input
@@ -284,16 +283,16 @@ export function CreatePostView({ onNavigate, onPostCreated }: CreatePostViewProp
                     placeholder="https://amazon.com/... or custom redirect URL"
                     value={shopUrl}
                     onChange={(e) => setShopUrl(e.target.value)}
-                    className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200/80 focus:border-[#CC0000] focus:bg-white rounded-xl text-xs font-bold text-[#1A1A1A] transition focus:outline-none"
+                    className="w-full h-14 px-4 bg-transparent border border-[#857371] focus:border-[#CC0000] rounded-[4px] text-sm text-[#1A1A1A] transition focus:outline-none placeholder-[#857371]/50"
                     required
                   />
                 </div>
               </div>
 
               {/* Error messages & submits */}
-              <div className="space-y-3 pt-6 border-t border-gray-100">
+              <div className="space-y-3 pt-6 border-t border-[#857371]/20">
                 {errorMessage && (
-                  <div className="p-3 bg-red-50 text-[#CC0000] text-xs font-bold rounded-xl flex items-center gap-1.5 border border-red-100">
+                  <div className="p-3 bg-[#FFDAD6] text-[#B3261E] text-xs font-semibold rounded-xl flex items-center gap-1.5 border border-[#B3261E]/20 animate-pulse">
                     <AlertCircle size={16} />
                     <span>{errorMessage}</span>
                   </div>
@@ -302,7 +301,7 @@ export function CreatePostView({ onNavigate, onPostCreated }: CreatePostViewProp
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3.5 bg-[#CC0000] hover:bg-[#E60000] disabled:bg-gray-400 text-white font-black text-xs uppercase tracking-widest rounded-xl transition shadow-lg shadow-red-900/15 flex items-center justify-center gap-2"
+                  className="w-full h-12 bg-[#CC0000] hover:bg-[#CC0000]/92 active:bg-[#CC0000]/88 disabled:bg-gray-400 text-[#FFFFFF] font-semibold text-xs uppercase tracking-widest rounded-full transition shadow flex items-center justify-center gap-2"
                 >
                   {loading ? (
                     <>
@@ -324,4 +323,5 @@ export function CreatePostView({ onNavigate, onPostCreated }: CreatePostViewProp
     </div>
   );
 }
+
 export default CreatePostView;

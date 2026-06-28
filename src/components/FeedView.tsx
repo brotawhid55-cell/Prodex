@@ -28,12 +28,9 @@ export function FeedView({ onNavigateToPost, onNavigate }: FeedViewProps) {
         setPosts(data);
         
         // Let's resolve the user details for these posts
-        // Fetch context to get simulated user details, or seed details
         const contextRes = await fetch("/api/context");
         const context = await contextRes.json();
         
-        // Since we have a seed user "techcurator" and other registered users,
-        // let's create a map of userId to username for correct card branding.
         const map: Record<string, { username: string; display_name: string }> = {
           "d3b07384-d113-4ec4-a14f-83679c53641b": {
             username: "techcurator",
@@ -48,7 +45,6 @@ export function FeedView({ onNavigateToPost, onNavigate }: FeedViewProps) {
           };
         }
 
-        // Fetch other users as needed or default to placeholder
         setUsersMap(map);
       }
     } catch (err) {
@@ -69,29 +65,30 @@ export function FeedView({ onNavigateToPost, onNavigate }: FeedViewProps) {
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto px-4 md:px-8 py-6">
-      {/* Search Header Banner */}
-      <div className="bg-white rounded-2xl border border-gray-100 p-6 md:p-8 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="space-y-2">
-          <h2 className="text-2xl md:text-3xl font-black tracking-tight text-[#1A1A1A]">
+    <div className="space-y-6 max-w-4xl mx-auto px-4 py-6">
+      {/* Search Header Banner (Material 3 Style) */}
+      <div className="bg-[#FFF8F7] rounded-[28px] border border-[#857371]/10 p-6 md:p-8 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="space-y-2 max-w-md">
+          <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-[#1A1A1A]">
             DISCOVER <span className="text-[#CC0000]">CURATED GEAR</span>
           </h2>
-          <p className="text-xs md:text-sm text-gray-500 font-medium font-sans">
+          <p className="text-xs md:text-sm text-[#534341] font-normal leading-relaxed">
             Explore authentic product reviews with direct shop and affiliate links by top curators.
           </p>
         </div>
 
-        {/* Big Search Input */}
+        {/* Big Search Input (Material 3 Search Bar) */}
         <div className="relative flex-1 max-w-md w-full">
-          <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-gray-400">
+          <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-[#534341]">
             <Search size={18} />
           </div>
           <input
+            id="search-input"
             type="text"
             placeholder="Search titles, products, tags..."
             value={search}
             onChange={handleSearchChange}
-            className="w-full pl-11 pr-4 py-3 bg-gray-50 hover:bg-gray-100 focus:bg-white border-2 border-gray-200/80 focus:border-[#CC0000] rounded-xl text-sm font-bold text-[#1A1A1A] transition focus:outline-none placeholder-gray-400 shadow-sm"
+            className="w-full h-14 pl-12 pr-4 bg-[#F5DDDB] hover:bg-[#F5DDDB]/90 focus:bg-[#FFF8F7] border border-[#857371]/30 focus:border-[#CC0000] rounded-full text-sm font-medium text-[#1A1A1A] transition focus:outline-none placeholder-[#534341] shadow-sm"
           />
         </div>
       </div>
@@ -100,24 +97,24 @@ export function FeedView({ onNavigateToPost, onNavigate }: FeedViewProps) {
       {loading ? (
         <div className="flex flex-col items-center justify-center py-20 gap-3">
           <Loader2 className="animate-spin text-[#CC0000]" size={36} />
-          <span className="text-xs font-mono font-bold text-gray-500 uppercase tracking-widest">
+          <span className="text-xs font-mono font-bold text-[#534341] uppercase tracking-widest">
             Loading products...
           </span>
         </div>
       ) : posts.length === 0 ? (
-        <div className="bg-white border border-dashed border-gray-200 rounded-2xl text-center p-12 max-w-md mx-auto space-y-4 shadow-sm">
-          <div className="bg-red-50 text-[#CC0000] p-4 rounded-full w-fit mx-auto">
+        <div className="bg-[#FFF8F7] border border-dashed border-[#857371]/30 rounded-[28px] text-center p-12 max-w-md mx-auto space-y-4 shadow-sm">
+          <div className="bg-[#FFDAD6] text-[#410002] p-4 rounded-full w-fit mx-auto">
             <ShoppingBag size={24} />
           </div>
           <div className="space-y-1">
-            <h3 className="font-black text-[#1A1A1A] text-lg">No products yet</h3>
-            <p className="text-xs text-gray-500 font-medium font-sans">
+            <h3 className="font-bold text-[#1A1A1A] text-lg">No products yet</h3>
+            <p className="text-xs text-[#534341] font-normal">
               We couldn't find any products matching your search. Try adding a new curation or exploring general tags.
             </p>
           </div>
           <button
             onClick={() => onNavigate("/create-post")}
-            className="px-5 py-2.5 bg-[#1A1A1A] hover:bg-gray-800 text-white text-xs font-bold rounded-xl transition"
+            className="h-10 px-6 rounded-full bg-[#CC0000] hover:bg-[#CC0000]/92 active:bg-[#CC0000]/88 text-[#FFFFFF] text-xs font-semibold transition shadow"
           >
             Create first post
           </button>
@@ -140,4 +137,5 @@ export function FeedView({ onNavigateToPost, onNavigate }: FeedViewProps) {
     </div>
   );
 }
+
 export default FeedView;

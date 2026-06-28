@@ -21,95 +21,93 @@ export function Header({
   const isStoreView = !!currentSubdomain;
 
   return (
-    <header className="sticky top-0 z-30 bg-[#1A1A1A] border-b border-gray-800 shadow-sm px-4 py-4 md:px-8">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
-        {/* Branding / Logo */}
+    <header className="sticky top-0 z-30 bg-[#FFF8F7] border-b border-[#857371]/30 px-4 md:px-8 h-16 flex items-center shadow-sm">
+      <div className="w-full max-w-7xl mx-auto flex items-center justify-between">
+        {/* Branding / Logo (Material 3 style) */}
         <div 
           onClick={() => onNavigate("/")}
-          className="flex items-center gap-2 cursor-pointer group"
+          className="flex items-center gap-2 cursor-pointer group select-none"
         >
-          <div className="bg-[#CC0000] p-2 rounded-xl text-white shadow-sm group-hover:scale-105 transition-transform duration-200">
-            <ShoppingBag size={20} className="stroke-[2.5]" />
+          <div className="bg-[#CC0000] p-2 rounded-xl text-white shadow-sm hover:bg-[#CC0000]/92 transition duration-200">
+            <ShoppingBag size={18} className="stroke-[2.5]" />
           </div>
           <div>
-            <h1 className="text-xl md:text-2xl font-black tracking-tighter text-white leading-none uppercase">
+            <h1 className="text-xl md:text-2xl font-bold tracking-tight text-[#1A1A1A] leading-none uppercase">
               {isStoreView ? (
                 <>
                   <span className="text-[#CC0000]">{subdomainUser?.display_name || currentSubdomain}</span>
-                  <span className="text-xs font-mono font-bold lowercase text-gray-400 block tracking-normal mt-0.5">
+                  <span className="text-[11px] font-medium lowercase text-[#534341] block tracking-normal mt-0.5">
                     powered by trodex
                   </span>
                 </>
               ) : (
                 <>
-                  TRO<span className="text-[#CC0000]">DEX</span>
+                  <span className="text-[#CC0000] font-black">TRO</span>
+                  <span className="text-[#1A1A1A] font-light">DEX</span>
                 </>
               )}
             </h1>
           </div>
         </div>
 
-        {/* Desktop Navigation */}
+        {/* Desktop Navigation (Material 3 Buttons with state layers) */}
         <nav className="hidden md:flex items-center gap-4">
-          {/* If looking at a subdomain, link back to main feed */}
           {isStoreView && (
             <button
               onClick={() => {
-                // Navigate back to Main Feed (by clearing subdomain)
                 window.location.search = "";
               }}
-              className="flex items-center gap-1.5 px-3.5 py-2 border border-gray-700 hover:bg-gray-800 text-white font-bold text-xs rounded-xl transition"
+              className="flex items-center gap-2 h-10 px-4 border border-[#857371] hover:bg-[#CC0000]/8 active:bg-[#CC0000]/12 text-[#CC0000] font-medium text-xs rounded-full transition-all duration-150"
             >
-              <Store size={14} className="text-[#CC0000]" />
+              <Store size={14} />
               <span>Explore Main Feed</span>
             </button>
           )}
 
           {currentUser ? (
             <>
-              {/* Logged In Items */}
               <button
                 onClick={() => onNavigate("/create-post")}
-                className={`flex items-center gap-1.5 px-3.5 py-2 font-bold text-xs rounded-xl transition shadow-sm ${
+                className={`flex items-center gap-2 h-10 px-4 font-medium text-xs rounded-full transition-all duration-150 ${
                   currentPath === "/create-post"
-                    ? "bg-[#CC0000] text-white"
-                    : "bg-gray-800 hover:bg-gray-700 text-white border border-gray-700"
+                    ? "bg-[#CC0000] text-[#FFFFFF] hover:bg-[#CC0000]/92 active:bg-[#CC0000]/88"
+                    : "border border-[#857371] text-[#1A1A1A] hover:bg-[#1A1A1A]/8 active:bg-[#1A1A1A]/12"
                 }`}
               >
-                <PlusCircle size={14} className={currentPath === "/create-post" ? "text-white" : "text-[#CC0000]"} />
+                <PlusCircle size={14} />
                 <span>Create Post</span>
               </button>
 
               <button
                 onClick={() => onNavigate("/settings")}
-                className={`flex items-center gap-1.5 px-3.5 py-2 font-bold text-xs rounded-xl transition border ${
+                className={`flex items-center gap-2 h-10 px-4 font-medium text-xs rounded-full transition-all duration-150 ${
                   currentPath === "/settings"
-                    ? "bg-[#CC0000] text-white border-[#CC0000]"
-                    : "bg-transparent hover:bg-gray-800 text-gray-200 border-gray-700"
+                    ? "bg-[#CC0000] text-[#FFFFFF] hover:bg-[#CC0000]/92 active:bg-[#CC0000]/88"
+                    : "border border-[#857371] text-[#1A1A1A] hover:bg-[#1A1A1A]/8 active:bg-[#1A1A1A]/12"
                 }`}
               >
-                <Settings size={14} className={currentPath === "/settings" ? "text-white" : "text-[#CC0000]"} />
+                <Settings size={14} />
                 <span>Settings</span>
               </button>
 
-              <div className="flex items-center gap-2 pl-2 border-l border-gray-700">
+              <div className="flex items-center gap-3 pl-3 border-l border-[#857371]/30">
                 <img
                   src={currentUser.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${currentUser.username}`}
                   alt={currentUser.display_name}
-                  className="h-8 w-8 rounded-xl object-cover border border-gray-700 shadow-sm"
+                  className="h-8 w-8 rounded-full object-cover border border-[#857371]/30"
                 />
                 <div className="text-left">
-                  <span className="block text-xs font-black text-white leading-none">
+                  <span className="block text-sm font-medium text-[#1A1A1A] leading-none">
                     {currentUser.display_name}
                   </span>
-                  <span className="text-[10px] font-mono text-gray-400 lowercase">
+                  <span className="text-xs text-[#534341] lowercase">
                     @{currentUser.username}
                   </span>
                 </div>
                 <button
                   onClick={onLogout}
                   title="Logout"
-                  className="p-1.5 hover:bg-gray-800 hover:text-[#CC0000] text-gray-400 rounded-lg transition ml-1"
+                  className="p-2 hover:bg-[#CC0000]/8 active:bg-[#CC0000]/12 text-[#CC0000] rounded-full transition-all duration-150 ml-1"
                 >
                   <LogOut size={16} />
                 </button>
@@ -117,18 +115,17 @@ export function Header({
             </>
           ) : (
             <>
-              {/* Logged Out Items */}
               <button
                 onClick={() => onNavigate("/login")}
-                className="flex items-center gap-1.5 px-4 py-2 border border-gray-700 hover:bg-gray-800 text-white font-bold text-xs rounded-xl transition"
+                className="flex items-center gap-2 h-10 px-4 border border-[#857371] hover:bg-[#CC0000]/8 active:bg-[#CC0000]/12 text-[#CC0000] font-medium text-xs rounded-full transition-all duration-150"
               >
-                <LogIn size={14} className="text-[#CC0000]" />
+                <LogIn size={14} />
                 <span>Log In</span>
               </button>
               
               <button
                 onClick={() => onNavigate("/register")}
-                className="flex items-center gap-1.5 px-4 py-2 bg-[#CC0000] hover:bg-[#E60000] text-white font-bold text-xs rounded-xl transition shadow-md shadow-red-900/10"
+                className="flex items-center gap-2 h-10 px-4 bg-[#CC0000] hover:bg-[#CC0000]/92 active:bg-[#CC0000]/88 text-[#FFFFFF] font-medium text-xs rounded-full transition-all duration-150"
               >
                 <UserPlus size={14} />
                 <span>Register</span>
@@ -142,14 +139,14 @@ export function Header({
           {currentUser ? (
             <img
               onClick={() => onNavigate("/settings")}
-              src={currentUser.avatar_url}
+              src={currentUser.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${currentUser.username}`}
               alt={currentUser.display_name}
-              className="h-8 w-8 rounded-xl object-cover border border-gray-700 shadow cursor-pointer active:scale-95 transition-transform"
+              className="h-8 w-8 rounded-full object-cover border border-[#857371]/30 cursor-pointer active:scale-95 transition-transform duration-100"
             />
           ) : (
             <button
               onClick={() => onNavigate("/login")}
-              className="px-3 py-1.5 bg-[#CC0000] text-white text-xs font-bold rounded-lg"
+              className="h-9 px-4 bg-[#CC0000] hover:bg-[#CC0000]/92 active:bg-[#CC0000]/88 text-[#FFFFFF] text-xs font-medium rounded-full transition"
             >
               Log In
             </button>
@@ -159,4 +156,5 @@ export function Header({
     </header>
   );
 }
+
 export default Header;
