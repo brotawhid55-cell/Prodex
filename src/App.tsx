@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Header } from "./components/Header.tsx";
 import { BottomNav } from "./components/BottomNav.tsx";
-import { DevToolbar } from "./components/DevToolbar.tsx";
 import { FeedView } from "./components/FeedView.tsx";
 import { ProfileView } from "./components/ProfileView.tsx";
 import { PostView } from "./components/PostView.tsx";
@@ -9,7 +8,7 @@ import { CreatePostView } from "./components/CreatePostView.tsx";
 import { SettingsView } from "./components/SettingsView.tsx";
 import { AuthView } from "./components/AuthView.tsx";
 import { motion, AnimatePresence } from "motion/react";
-import { Loader2, Sparkles, Store, Cpu, User } from "lucide-react";
+import { Loader2, Store, Cpu, User } from "lucide-react";
 
 export default function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
@@ -99,14 +98,6 @@ export default function App() {
   return (
     <div className="min-h-screen bg-[#F5F0EB] text-[#1A1A1A] font-sans flex flex-col justify-between pb-16 md:pb-0">
       
-      {/* Dev panel for testing subdomains in iframe */}
-      <DevToolbar
-        currentSubdomain={subdomain}
-        currentUser={currentUser}
-        isUsingNeon={isUsingNeon}
-        onSimulateSubdomain={handleSimulateSubdomain}
-      />
-
       {/* Header component */}
       <Header
         currentPath={currentPath}

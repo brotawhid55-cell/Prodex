@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { StarRating } from "./StarRating.tsx";
 import { PostCard, Post } from "./PostCard.tsx";
-import { Copy, Check, ShieldCheck, ExternalLink, Globe, Key, Settings, Sparkles, Loader2, AlertCircle } from "lucide-react";
+import { Copy, Check, ShieldCheck, ExternalLink, Globe, Key, Settings, Loader2, AlertCircle, ShoppingBag } from "lucide-react";
 import { motion } from "motion/react";
 
 interface ProfileViewProps {
@@ -225,7 +225,7 @@ export function ProfileView({
       {/* Grid of posts */}
       <div className="space-y-6">
         <h3 className="text-xl font-black text-[#1A1A1A] tracking-tight uppercase border-b border-gray-100 pb-3 flex items-center gap-2">
-          <Sparkles size={18} className="text-[#CC0000]" />
+          <ShoppingBag size={18} className="text-[#CC0000]" />
           <span>Curated Reviews</span>
         </h3>
 

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { LogIn, UserPlus, AlertCircle, Loader2, Sparkles, ShoppingBag } from "lucide-react";
+import { LogIn, UserPlus, AlertCircle, Loader2, ShoppingBag } from "lucide-react";
 import { motion } from "motion/react";
 
 interface AuthViewProps {

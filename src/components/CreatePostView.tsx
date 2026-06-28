@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { PlusCircle, Loader2, Sparkles, AlertCircle, ShoppingBag, ArrowLeft, Image as ImageIcon } from "lucide-react";
+import { PlusCircle, Loader2, Check, AlertCircle, ShoppingBag, ArrowLeft, Image as ImageIcon } from "lucide-react";
 import { motion } from "motion/react";
 
 interface CreatePostViewProps {
@@ -127,7 +127,7 @@ export function CreatePostView({ onNavigate, onPostCreated }: CreatePostViewProp
         {success ? (
           <div className="text-center py-16 space-y-4">
             <div className="bg-green-50 text-green-500 p-4 rounded-full w-fit mx-auto shadow-sm">
-              <Sparkles size={32} className="animate-bounce" />
+              <Check size={32} className="animate-bounce" />
             </div>
             <div>
               <h3 className="text-xl font-black text-[#1A1A1A]">CURATION LIVE!</h3>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { PostCard, Post } from "./PostCard.tsx";
-import { Search, Loader2, Sparkles, Filter, Store } from "lucide-react";
+import { Search, Loader2, Filter, Store, ShoppingBag } from "lucide-react";
 import { motion } from "motion/react";
 
 interface FeedViewProps {
@@ -104,7 +104,7 @@ export function FeedView({ onNavigateToPost, onNavigate }: FeedViewProps) {
       ) : posts.length === 0 ? (
         <div className="bg-white border border-dashed border-gray-200 rounded-2xl text-center p-12 max-w-md mx-auto space-y-4 shadow-sm">
           <div className="bg-red-50 text-[#CC0000] p-4 rounded-full w-fit mx-auto">
-            <Sparkles size={24} />
+            <ShoppingBag size={24} />
           </div>
           <div className="space-y-1">
             <h3 className="font-black text-[#1A1A1A] text-lg">No products found</h3>
