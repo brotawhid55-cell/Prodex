@@ -42,41 +42,43 @@ export async function ensureDbInitialized() {
   }
 
   try {
-    const sql = neon(dbUrl) as any;
+    const sql = neon(dbUrl);
 
-    await sql(`
+    // Bootstrap Users table
+    await sql`
       CREATE TABLE IF NOT EXISTS users (
-        id UUID PRIMARY KEY,
-        username VARCHAR(100) UNIQUE NOT NULL,
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        username VARCHAR(50) UNIQUE NOT NULL,
         email VARCHAR(255) UNIQUE NOT NULL,
-        password_hash VARCHAR(255) NOT NULL,
-        display_name VARCHAR(255) NOT NULL,
+        password_hash TEXT NOT NULL,
+        display_name VARCHAR(100),
         bio VARCHAR(160),
         avatar_url TEXT,
         search_console_meta_tag TEXT,
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+        created_at TIMESTAMP DEFAULT NOW()
       );
-    `);
+    `;
 
-    await sql(`
+    // Bootstrap Posts table
+    await sql`
       CREATE TABLE IF NOT EXISTS posts (
-        id UUID PRIMARY KEY,
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID REFERENCES users(id) ON DELETE CASCADE,
         title VARCHAR(100) NOT NULL,
-        meta_description VARCHAR(160) NOT NULL,
-        image_url TEXT NOT NULL,
-        about VARCHAR(1000) NOT NULL,
-        rating DECIMAL(3, 2) NOT NULL,
-        review_count INTEGER NOT NULL,
-        shop_url TEXT NOT NULL,
-        slug VARCHAR(255) NOT NULL,
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-        CONSTRAINT unique_user_post_slug UNIQUE (user_id, slug)
+        meta_description VARCHAR(160),
+        image_url TEXT,
+        about TEXT,
+        rating DECIMAL(2,1) CHECK (rating >= 1 AND rating <= 5),
+        review_count INTEGER DEFAULT 0,
+        shop_url TEXT,
+        slug VARCHAR(200) NOT NULL,
+        created_at TIMESTAMP DEFAULT NOW(),
+        UNIQUE(user_id, slug)
       );
-    `);
+    `;
 
     // Check if demo user exists
-    const rows = await sql("SELECT id FROM users WHERE LOWER(username) = LOWER($1) LIMIT 1", ["techcurator"]);
+    const rows = await sql`SELECT id FROM users WHERE LOWER(username) = LOWER(${"techcurator"}) LIMIT 1`;
     if (rows.length === 0) {
       console.log("Seeding beautiful sample data...");
       const passwordHash = await bcrypt.hash("password123", 10);
@@ -93,21 +95,20 @@ export async function ensureDbInitialized() {
         created_at: new Date().toISOString()
       };
 
-      await sql(
-        `INSERT INTO users (id, username, email, password_hash, display_name, bio, avatar_url, search_console_meta_tag, created_at)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
-        [
-          demoUser.id,
-          demoUser.username.toLowerCase(),
-          demoUser.email.toLowerCase(),
-          demoUser.password_hash,
-          demoUser.display_name,
-          demoUser.bio,
-          demoUser.avatar_url,
-          demoUser.search_console_meta_tag,
-          demoUser.created_at
-        ]
-      );
+      await sql`
+        INSERT INTO users (id, username, email, password_hash, display_name, bio, avatar_url, search_console_meta_tag, created_at)
+        VALUES (
+          ${demoUser.id}, 
+          ${demoUser.username.toLowerCase()}, 
+          ${demoUser.email.toLowerCase()}, 
+          ${demoUser.password_hash}, 
+          ${demoUser.display_name}, 
+          ${demoUser.bio}, 
+          ${demoUser.avatar_url}, 
+          ${demoUser.search_console_meta_tag}, 
+          ${demoUser.created_at}
+        )
+      `;
       console.log("Seeding complete!");
     }
 
@@ -124,7 +125,7 @@ function getSql() {
       "DATABASE_URL is required. \nAdd it to .env.local or Vercel Environment Variables. \nGet it from neon.tech"
     );
   }
-  return neon(dbUrl) as any;
+  return neon(dbUrl);
 }
 
 export const db = {
@@ -132,42 +133,41 @@ export const db = {
   async getUserByEmail(email: string): Promise<User | null> {
     await ensureDbInitialized();
     const sql = getSql();
-    const rows = await sql("SELECT * FROM users WHERE LOWER(email) = LOWER($1) LIMIT 1", [email]);
+    const rows = await sql`SELECT * FROM users WHERE LOWER(email) = LOWER(${email}) LIMIT 1`;
     return rows[0] ? (rows[0] as User) : null;
   },
 
   async getUserByUsername(username: string): Promise<User | null> {
     await ensureDbInitialized();
     const sql = getSql();
-    const rows = await sql("SELECT * FROM users WHERE LOWER(username) = LOWER($1) LIMIT 1", [username]);
+    const rows = await sql`SELECT * FROM users WHERE LOWER(username) = LOWER(${username}) LIMIT 1`;
     return rows[0] ? (rows[0] as User) : null;
   },
 
   async getUserById(id: string): Promise<User | null> {
     await ensureDbInitialized();
     const sql = getSql();
-    const rows = await sql("SELECT * FROM users WHERE id = $1 LIMIT 1", [id]);
+    const rows = await sql`SELECT * FROM users WHERE id = ${id} LIMIT 1`;
     return rows[0] ? (rows[0] as User) : null;
   },
 
   async createUser(user: User): Promise<User> {
     await ensureDbInitialized();
     const sql = getSql();
-    await sql(
-      `INSERT INTO users (id, username, email, password_hash, display_name, bio, avatar_url, search_console_meta_tag, created_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
-      [
-        user.id,
-        user.username.toLowerCase(),
-        user.email.toLowerCase(),
-        user.password_hash,
-        user.display_name,
-        user.bio,
-        user.avatar_url,
-        user.search_console_meta_tag,
-        user.created_at
-      ]
-    );
+    await sql`
+      INSERT INTO users (id, username, email, password_hash, display_name, bio, avatar_url, search_console_meta_tag, created_at)
+      VALUES (
+        ${user.id}, 
+        ${user.username.toLowerCase()}, 
+        ${user.email.toLowerCase()}, 
+        ${user.password_hash}, 
+        ${user.display_name}, 
+        ${user.bio}, 
+        ${user.avatar_url}, 
+        ${user.search_console_meta_tag}, 
+        ${user.created_at}
+      )
+    `;
     return user;
   },
 
@@ -177,24 +177,33 @@ export const db = {
   ): Promise<User> {
     await ensureDbInitialized();
     const sql = getSql();
-    const setStatements: string[] = [];
-    const values: any[] = [id];
-    let valIndex = 2;
+    
+    const currentUser = await this.getUserById(id);
+    if (!currentUser) throw new Error("User not found");
 
-    for (const [key, value] of Object.entries(updates)) {
-      setStatements.push(`${key} = $${valIndex}`);
-      values.push(value);
-      valIndex++;
-    }
+    const merged = {
+      username: updates.username !== undefined ? updates.username : currentUser.username,
+      email: updates.email !== undefined ? updates.email : currentUser.email,
+      password_hash: updates.password_hash !== undefined ? updates.password_hash : currentUser.password_hash,
+      display_name: updates.display_name !== undefined ? updates.display_name : currentUser.display_name,
+      bio: updates.bio !== undefined ? updates.bio : currentUser.bio,
+      avatar_url: updates.avatar_url !== undefined ? updates.avatar_url : currentUser.avatar_url,
+      search_console_meta_tag: updates.search_console_meta_tag !== undefined ? updates.search_console_meta_tag : currentUser.search_console_meta_tag,
+    };
 
-    if (setStatements.length === 0) {
-      const user = await this.getUserById(id);
-      if (!user) throw new Error("User not found");
-      return user;
-    }
-
-    const query = `UPDATE users SET ${setStatements.join(", ")} WHERE id = $1 RETURNING *`;
-    const rows = await sql(query, values);
+    const rows = await sql`
+      UPDATE users 
+      SET 
+        username = ${merged.username.toLowerCase()}, 
+        email = ${merged.email.toLowerCase()}, 
+        password_hash = ${merged.password_hash}, 
+        display_name = ${merged.display_name}, 
+        bio = ${merged.bio}, 
+        avatar_url = ${merged.avatar_url}, 
+        search_console_meta_tag = ${merged.search_console_meta_tag}
+      WHERE id = ${id} 
+      RETURNING *
+    `;
     return rows[0] as User;
   },
 
@@ -202,59 +211,49 @@ export const db = {
   async getPosts(options?: { search?: string; userId?: string }): Promise<Post[]> {
     await ensureDbInitialized();
     const sql = getSql();
-    let query = "SELECT * FROM posts";
-    const conditions: string[] = [];
-    const values: any[] = [];
-    let valIndex = 1;
+    
+    const userId = options?.userId;
+    const search = options?.search ? `%${options.search.toLowerCase()}%` : null;
 
-    if (options?.userId) {
-      conditions.push(`user_id = $${valIndex}`);
-      values.push(options.userId);
-      valIndex++;
+    let rows;
+    if (userId && search) {
+      rows = await sql`SELECT * FROM posts WHERE user_id = ${userId} AND LOWER(title) LIKE ${search} ORDER BY created_at DESC`;
+    } else if (userId) {
+      rows = await sql`SELECT * FROM posts WHERE user_id = ${userId} ORDER BY created_at DESC`;
+    } else if (search) {
+      rows = await sql`SELECT * FROM posts WHERE LOWER(title) LIKE ${search} ORDER BY created_at DESC`;
+    } else {
+      rows = await sql`SELECT * FROM posts ORDER BY created_at DESC`;
     }
-
-    if (options?.search) {
-      conditions.push(`LOWER(title) LIKE $${valIndex}`);
-      values.push(`%${options.search.toLowerCase()}%`);
-      valIndex++;
-    }
-
-    if (conditions.length > 0) {
-      query += " WHERE " + conditions.join(" AND ");
-    }
-
-    query += " ORDER BY created_at DESC";
-    const rows = await sql(query, values);
     return rows as Post[];
   },
 
   async getPostBySlugAndUser(userId: string, slug: string): Promise<Post | null> {
     await ensureDbInitialized();
     const sql = getSql();
-    const rows = await sql("SELECT * FROM posts WHERE user_id = $1 AND slug = $2 LIMIT 1", [userId, slug]);
+    const rows = await sql`SELECT * FROM posts WHERE user_id = ${userId} AND slug = ${slug} LIMIT 1`;
     return rows[0] ? (rows[0] as Post) : null;
   },
 
   async createPost(post: Post): Promise<Post> {
     await ensureDbInitialized();
     const sql = getSql();
-    await sql(
-      `INSERT INTO posts (id, user_id, title, meta_description, image_url, about, rating, review_count, shop_url, slug, created_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
-      [
-        post.id,
-        post.user_id,
-        post.title,
-        post.meta_description,
-        post.image_url,
-        post.about,
-        post.rating,
-        post.review_count,
-        post.shop_url,
-        post.slug,
-        post.created_at
-      ]
-    );
+    await sql`
+      INSERT INTO posts (id, user_id, title, meta_description, image_url, about, rating, review_count, shop_url, slug, created_at)
+      VALUES (
+        ${post.id}, 
+        ${post.user_id}, 
+        ${post.title}, 
+        ${post.meta_description}, 
+        ${post.image_url}, 
+        ${post.about}, 
+        ${post.rating}, 
+        ${post.review_count}, 
+        ${post.shop_url}, 
+        ${post.slug}, 
+        ${post.created_at}
+      )
+    `;
     return post;
   }
 };
