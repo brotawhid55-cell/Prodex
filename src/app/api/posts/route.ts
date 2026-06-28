@@ -94,7 +94,7 @@ export async function POST(req: NextRequest) {
     };
 
     const saved = await db.createPost(newPost);
-    return NextResponse.json({ success: true, post: saved });
+    return NextResponse.json({ success: true, slug: saved.slug });
   } catch (err: any) {
     return NextResponse.json({ error: "Failed to create post: " + err.message }, { status: 500 });
   }

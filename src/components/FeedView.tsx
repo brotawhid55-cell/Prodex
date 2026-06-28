@@ -18,7 +18,10 @@ export function FeedView({ onNavigateToPost, onNavigate }: FeedViewProps) {
     setLoading(true);
     try {
       // Fetch posts
-      const res = await fetch(`/api/posts?search=${encodeURIComponent(query)}`);
+      const endpoint = query 
+        ? `/api/search?q=${encodeURIComponent(query)}`
+        : `/api/posts`;
+      const res = await fetch(endpoint);
       const data = await res.json();
       
       if (Array.isArray(data)) {

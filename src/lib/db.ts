@@ -29,6 +29,7 @@ export interface Post {
   review_count: number;
   shop_url: string;
   slug: string;
+  view_count?: number;
   created_at: string;
 }
 
@@ -89,6 +90,9 @@ export async function ensureDbInitialized() {
     await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS baidu_verification TEXT;`;
     await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS pinterest_verification TEXT;`;
 
+    // Alter posts table to add view_count if not exists
+    await sql`ALTER TABLE posts ADD COLUMN IF NOT EXISTS view_count INTEGER DEFAULT 0;`;
+
     // Check if demo user exists
     const rows = await sql`SELECT id FROM users WHERE LOWER(username) = LOWER(${"techcurator"}) LIMIT 1`;
     if (rows.length === 0) {
@@ -130,7 +134,7 @@ export async function ensureDbInitialized() {
   }
 }
 
-function getSql() {
+export function getSql() {
   const dbUrl = process.env.DATABASE_URL;
   if (!dbUrl) {
     throw new Error(
@@ -279,6 +283,25 @@ export const db = {
     const sql = getSql();
     const rows = await sql`SELECT * FROM posts WHERE user_id = ${userId} AND slug = ${slug} LIMIT 1`;
     return rows[0] ? (rows[0] as Post) : null;
+  },
+
+  async getPostById(id: string): Promise<Post | null> {
+    await ensureDbInitialized();
+    const sql = getSql();
+    const rows = await sql`SELECT * FROM posts WHERE id = ${id} LIMIT 1`;
+    return rows[0] ? (rows[0] as Post) : null;
+  },
+
+  async incrementViewCount(id: string): Promise<void> {
+    await ensureDbInitialized();
+    const sql = getSql();
+    await sql`UPDATE posts SET view_count = COALESCE(view_count, 0) + 1 WHERE id = ${id}`;
+  },
+
+  async deletePost(id: string): Promise<void> {
+    await ensureDbInitialized();
+    const sql = getSql();
+    await sql`DELETE FROM posts WHERE id = ${id}`;
   },
 
   async createPost(post: Post): Promise<Post> {

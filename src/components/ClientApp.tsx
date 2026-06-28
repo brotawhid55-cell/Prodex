@@ -219,7 +219,7 @@ export function ClientApp() {
                         <AuthView
                           initialMode="login"
                           onAuthSuccess={() => {
-                            fetchContext().then(() => navigateTo("/"));
+                            fetchContext().then(() => navigateTo("/settings"));
                           }}
                         />
                       );
@@ -228,7 +228,7 @@ export function ClientApp() {
                         <AuthView
                           initialMode="register"
                           onAuthSuccess={() => {
-                            fetchContext().then(() => navigateTo("/"));
+                            fetchContext().then(() => navigateTo("/settings"));
                           }}
                         />
                       );
@@ -237,9 +237,7 @@ export function ClientApp() {
                         <CreatePostView
                           onNavigate={navigateTo}
                           onPostCreated={() => {
-                            handleSimulateSubdomain(currentUser.username).then(() => {
-                              navigateTo("/");
-                            });
+                            navigateTo("/settings");
                           }}
                         />
                       ) : (
@@ -265,6 +263,51 @@ export function ClientApp() {
                           }}
                         />
                       );
+                    case "/about":
+                      return (
+                        <div className="max-w-2xl mx-auto bg-white p-6 md:p-8 rounded-3xl border border-gray-100 shadow-sm space-y-4">
+                          <h2 className="text-3xl font-black text-[#1A1A1A] uppercase tracking-tight">About <span className="text-[#CC0000]">Trodex</span></h2>
+                          <p className="text-xs text-gray-500 font-medium uppercase font-mono tracking-wider">The Decentralized Creator Storefront</p>
+                          <div className="text-sm text-gray-600 space-y-4 leading-relaxed font-medium">
+                            <p>
+                              Trodex empowers product curators, reviewers, and affiliate marketers to claim their own distinct brand subdomain and curate their favorite gear in seconds.
+                            </p>
+                            <p>
+                              By compiling custom reviews, real-time ratings, and clear shop direct/affiliate redirects, Trodex simplifies the link-in-bio storefront concept into beautiful, high-converting social feeds.
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    case "/privacy":
+                      return (
+                        <div className="max-w-2xl mx-auto bg-white p-6 md:p-8 rounded-3xl border border-gray-100 shadow-sm space-y-4">
+                          <h2 className="text-3xl font-black text-[#1A1A1A] uppercase tracking-tight">Privacy <span className="text-[#CC0000]">Policy</span></h2>
+                          <p className="text-xs text-gray-500 font-medium uppercase font-mono tracking-wider">Last updated: June 2026</p>
+                          <div className="text-sm text-gray-600 space-y-4 leading-relaxed font-medium">
+                            <p>
+                              Your privacy is important to us. Trodex does not track your keystrokes, sell your product curation lists, or monitor external referrer routes beyond standard session validation cookies.
+                            </p>
+                            <p>
+                              Any search engine verification meta tags you provide are rendered directly inside your subdomain's header to allow search consoles to claim ownership seamlessly.
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    case "/terms":
+                      return (
+                        <div className="max-w-2xl mx-auto bg-white p-6 md:p-8 rounded-3xl border border-gray-100 shadow-sm space-y-4">
+                          <h2 className="text-3xl font-black text-[#1A1A1A] uppercase tracking-tight">Terms of <span className="text-[#CC0000]">Service</span></h2>
+                          <p className="text-xs text-gray-500 font-medium uppercase font-mono tracking-wider">Last updated: June 2026</p>
+                          <div className="text-sm text-gray-600 space-y-4 leading-relaxed font-medium">
+                            <p>
+                              By registering a custom subdomain, you agree not to post malicious redirects, fraudulent reviews, or violate any trade laws with illegal affiliate networks.
+                            </p>
+                            <p>
+                              Trodex reserves the right to reclaim generic usernames or subdomains that infringe on active trademarks.
+                            </p>
+                          </div>
+                        </div>
+                      );
                     default:
                       return (
                         <div className="text-center py-20 space-y-3">
@@ -284,6 +327,26 @@ export function ClientApp() {
           </AnimatePresence>
         )}
       </main>
+
+      {/* Footer component with static links */}
+      <footer className="w-full bg-[#1A1A1A] border-t border-gray-800 text-gray-400 py-6 px-4 md:px-8 mt-12 mb-16 md:mb-0">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-medium">
+          <div>
+            &copy; {new Date().getFullYear()} Trodex. All rights reserved.
+          </div>
+          <div className="flex items-center gap-6 font-semibold">
+            <button onClick={() => navigateTo("/about")} className="hover:text-[#CC0000] transition text-left cursor-pointer">
+              About
+            </button>
+            <button onClick={() => navigateTo("/privacy")} className="hover:text-[#CC0000] transition text-left cursor-pointer">
+              Privacy Policy
+            </button>
+            <button onClick={() => navigateTo("/terms")} className="hover:text-[#CC0000] transition text-left cursor-pointer">
+              Terms of Service
+            </button>
+          </div>
+        </div>
+      </footer>
 
       {/* Floating Bottom Nav for mobile clients */}
       <BottomNav

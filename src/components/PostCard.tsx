@@ -27,6 +27,16 @@ interface PostCardProps {
 export function PostCard({ post, username, onNavigateToPost }: PostCardProps) {
   const [showModal, setShowModal] = useState(false);
 
+  const rounded = Math.round(post.rating);
+  const stars = [];
+  for (let i = 1; i <= 5; i++) {
+    if (i <= rounded) {
+      stars.push(<span key={i} className="text-yellow-400">★</span>);
+    } else {
+      stars.push(<span key={i} className="text-white/20">★</span>);
+    }
+  }
+
   return (
     <>
       <motion.div
@@ -53,9 +63,9 @@ export function PostCard({ post, username, onNavigateToPost }: PostCardProps) {
               @{username}
             </span>
             <div className="flex items-center gap-1 font-mono text-xs font-bold text-white">
-              <span className="text-yellow-400 text-base">★</span>
-              <span className="text-white font-bold text-xs">{post.rating.toFixed(1)}</span>
-              <span className="text-gray-300 font-normal text-[10px]">({post.review_count.toLocaleString()} reviews)</span>
+              <div className="flex gap-0.5">{stars}</div>
+              <span className="text-white font-bold text-xs ml-1">{post.rating.toFixed(1)}</span>
+              <span className="text-gray-300 font-normal text-[10px]">({post.review_count.toLocaleString()})</span>
             </div>
           </div>
 

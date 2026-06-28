@@ -48,25 +48,22 @@ export async function POST(req: NextRequest) {
 
     await db.createUser(newUser);
 
-    const token = jwt.sign({ userId: newUser.id, username: newUser.username }, JWT_SECRET, {
-      expiresIn: "30d"
-    });
+    const token = jwt.sign(
+      { userId: newUser.id, username: newUser.username, email: newUser.email },
+      JWT_SECRET,
+      { expiresIn: "7d" }
+    );
 
     const response = NextResponse.json({
       success: true,
-      user: {
-        id: newUser.id,
-        username: newUser.username,
-        email: newUser.email,
-        display_name: newUser.display_name
-      }
+      username: newUser.username
     });
 
-    response.cookies.set("token", token, {
+    response.cookies.set("trodex-token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: 30 * 24 * 3600, // 30 days in seconds
+      maxAge: 60 * 60 * 24 * 7, // 7 days in seconds
       path: "/"
     });
 

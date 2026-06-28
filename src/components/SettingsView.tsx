@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Settings, Loader2, Check, AlertCircle, ShieldCheck, Globe, User, ArrowLeft } from "lucide-react";
-import { motion } from "motion/react";
+import { Settings, Loader2, Check, AlertCircle, ShieldCheck, User, ArrowLeft, LogOut } from "lucide-react";
 
 interface SettingsViewProps {
   currentUser: any;
@@ -20,6 +19,7 @@ export function SettingsView({ currentUser, onNavigate, onRefreshContext }: Sett
   const [baiduVerification, setBaiduVerification] = useState("");
   const [pinterestVerification, setPinterestVerification] = useState("");
 
+  const [activeTab, setActiveTab] = useState<"profile" | "verification">("profile");
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
@@ -87,6 +87,16 @@ export function SettingsView({ currentUser, onNavigate, onRefreshContext }: Sett
     }
   };
 
+  const handleLogoutClick = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+      onRefreshContext();
+      onNavigate("/login");
+    } catch (err) {
+      console.error("Logout failed:", err);
+    }
+  };
+
   if (!currentUser) {
     return (
       <div className="max-w-md mx-auto py-20 text-center space-y-4">
@@ -97,6 +107,12 @@ export function SettingsView({ currentUser, onNavigate, onRefreshContext }: Sett
       </div>
     );
   }
+
+  // Resolve custom or fallback avatar URL
+  const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+    currentUser.username
+  )}&background=CC0000&color=fff&size=128`;
+  const resolvedAvatar = avatarUrl.trim() || fallbackAvatar;
 
   return (
     <div className="max-w-4xl mx-auto px-4 md:px-8 py-6 space-y-6">
@@ -110,7 +126,7 @@ export function SettingsView({ currentUser, onNavigate, onRefreshContext }: Sett
       </button>
 
       {/* Main Container */}
-      <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-6 md:p-8 space-y-8">
+      <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-6 md:p-8 space-y-6">
         
         {/* Title Heading */}
         <div className="border-b border-gray-100 pb-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -120,7 +136,7 @@ export function SettingsView({ currentUser, onNavigate, onRefreshContext }: Sett
               <span>Store Settings</span>
             </h2>
             <p className="text-xs text-gray-500 font-medium font-sans">
-              Update your store appearance, profile details, and external domain verifications.
+              Update your store appearance, profile details, and search engine verifications.
             </p>
           </div>
 
@@ -130,16 +146,80 @@ export function SettingsView({ currentUser, onNavigate, onRefreshContext }: Sett
           </div>
         </div>
 
+        {/* Tab Selection buttons */}
+        <div className="flex border-b border-gray-100">
+          <button
+            type="button"
+            onClick={() => {
+              setActiveTab("profile");
+              setStatus("idle");
+            }}
+            className={`flex-1 py-3 text-center text-xs font-black uppercase tracking-wider transition-all border-b-2 ${
+              activeTab === "profile"
+                ? "border-[#CC0000] text-[#CC0000]"
+                : "border-transparent text-gray-400 hover:text-[#1A1A1A]"
+            }`}
+          >
+            Store Profile
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setActiveTab("verification");
+              setStatus("idle");
+            }}
+            className={`flex-1 py-3 text-center text-xs font-black uppercase tracking-wider transition-all border-b-2 ${
+              activeTab === "verification"
+                ? "border-[#CC0000] text-[#CC0000]"
+                : "border-transparent text-gray-400 hover:text-[#1A1A1A]"
+            }`}
+          >
+            Search Engine Verification
+          </button>
+        </div>
+
         {/* Update Form */}
         <form onSubmit={handleSave} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            
-            {/* Left Hand: Core Profile */}
-            <div className="space-y-4">
+          
+          {activeTab === "profile" ? (
+            /* TAB 1: Store Profile */
+            <div className="space-y-4 max-w-xl">
               <h3 className="font-black text-sm uppercase tracking-wider text-gray-400 flex items-center gap-1.5 border-b border-gray-50 pb-2">
                 <User size={16} />
-                <span>SECTION A: Store Customization</span>
+                <span>Store Profile Info</span>
               </h3>
+
+              {/* Avatar URL + live preview */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-[#1A1A1A] uppercase">
+                  Profile Avatar URL
+                </label>
+                <input
+                  type="url"
+                  placeholder="https://images.unsplash.com/... or similar image URL"
+                  value={avatarUrl}
+                  onChange={(e) => setAvatarUrl(e.target.value)}
+                  className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200/80 focus:border-[#CC0000] focus:bg-white rounded-xl text-xs font-bold text-[#1A1A1A] transition focus:outline-none font-mono"
+                />
+                
+                {/* Avatar Preview block */}
+                <div className="flex items-center gap-3 pt-2 bg-gray-50 p-3 rounded-2xl border border-gray-100">
+                  <img
+                    src={resolvedAvatar}
+                    alt="Avatar Preview"
+                    className="h-16 w-16 rounded-2xl object-cover border-2 border-white shadow-md bg-white shrink-0"
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).src = fallbackAvatar;
+                    }}
+                  />
+                  <div>
+                    <span className="text-xs font-bold text-[#1A1A1A] block">Avatar Live Preview</span>
+                    <span className="text-[10px] text-gray-400 font-mono">
+                      {avatarUrl ? "Using custom URL" : "Using UI Avatars placeholder fallback"}
+                    </span>
+                  </div>
+                </div>
+              </div>
 
               {/* Display Name */}
               <div className="space-y-1.5">
@@ -154,32 +234,6 @@ export function SettingsView({ currentUser, onNavigate, onRefreshContext }: Sett
                   className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200/80 focus:border-[#CC0000] focus:bg-white rounded-xl text-xs font-bold text-[#1A1A1A] transition focus:outline-none"
                   required
                 />
-              </div>
-
-              {/* Avatar URL */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-[#1A1A1A] uppercase">
-                  Profile Avatar URL
-                </label>
-                <input
-                  type="url"
-                  placeholder="https://images.unsplash.com/... or similar image URL"
-                  value={avatarUrl}
-                  onChange={(e) => setAvatarUrl(e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200/80 focus:border-[#CC0000] focus:bg-white rounded-xl text-xs font-bold text-[#1A1A1A] transition focus:outline-none font-mono"
-                />
-                
-                {/* Micro avatar preview */}
-                {avatarUrl && (
-                  <div className="flex items-center gap-2 pt-1">
-                    <img
-                      src={avatarUrl}
-                      alt="Avatar Preview"
-                      className="h-10 w-10 rounded-xl object-cover border border-gray-200"
-                    />
-                    <span className="text-[10px] text-gray-400 font-mono">Live avatar preview</span>
-                  </div>
-                )}
               </div>
 
               {/* Bio */}
@@ -198,32 +252,37 @@ export function SettingsView({ currentUser, onNavigate, onRefreshContext }: Sett
                 />
               </div>
 
-              {/* Readonly Store URL Preview */}
+              {/* Readonly subdomain preview */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-[#1A1A1A] uppercase">
                   Your Store URL (Readonly Preview)
                 </label>
                 <input
                   type="text"
-                  value={`https://${currentUser.username}.trodex.com`}
+                  value={`${currentUser.username}.trodex.com`}
                   readOnly
                   className="w-full px-4 py-3 bg-gray-100 border-2 border-gray-200 text-gray-500 rounded-xl text-xs font-mono select-all focus:outline-none cursor-default"
                 />
               </div>
             </div>
+          ) : (
+            /* TAB 2: Search Engine Verification */
+            <div className="space-y-6 max-w-xl">
+              <div className="bg-blue-50 border border-blue-100 p-4 rounded-2xl space-y-1">
+                <h4 className="font-bold text-xs uppercase text-blue-700 flex items-center gap-1">
+                  <ShieldCheck size={14} />
+                  <span>Meta Verification Instructions</span>
+                </h4>
+                <p className="text-[11px] text-blue-600/95 leading-relaxed">
+                  Paste your verification meta tags below. They will appear in your store's <code className="bg-blue-100 px-1 py-0.5 rounded font-mono text-[10px]">&lt;head&gt;</code> automatically, allowing search engines to verify your subdomain.
+                </p>
+              </div>
 
-            {/* Right Hand: Search Engine Verification Fields */}
-            <div className="space-y-4">
-              <h3 className="font-black text-sm uppercase tracking-wider text-gray-400 flex items-center gap-1.5 border-b border-gray-50 pb-2">
-                <ShieldCheck size={16} />
-                <span>SECTION B: Search Engine Verification</span>
-              </h3>
-
-              {/* 1. Google Verification */}
+              {/* 🔴 Google Search Console */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-[#1A1A1A] flex items-center gap-1.5 uppercase">
-                  <span className="h-2 w-2 rounded-full bg-red-500" />
-                  <span>Google Verification Meta Tag</span>
+                  <span className="h-2 w-2 rounded-full bg-red-600" />
+                  <span>Google Search Console</span>
                 </label>
                 <input
                   type="text"
@@ -232,16 +291,19 @@ export function SettingsView({ currentUser, onNavigate, onRefreshContext }: Sett
                   onChange={(e) => setGoogleVerification(e.target.value)}
                   className="w-full px-4 py-2.5 bg-gray-50 border-2 border-gray-200/80 focus:border-[#CC0000] focus:bg-white rounded-xl text-xs font-mono text-gray-700 transition focus:outline-none"
                 />
-                <p className="text-[10px] text-gray-400 font-sans leading-relaxed">
-                  Get from <a href="https://search.google.com/search-console" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#CC0000]">search.google.com/search-console</a>
+                <p className="text-[10px] text-gray-400 font-sans">
+                  Paste verification meta tag. Get from{" "}
+                  <a href="https://search.google.com/search-console" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#CC0000] font-bold">
+                    search.google.com/search-console
+                  </a>
                 </p>
               </div>
 
-              {/* 2. Bing Verification */}
+              {/* 🔵 Bing Webmaster Tools */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-[#1A1A1A] flex items-center gap-1.5 uppercase">
-                  <span className="h-2 w-2 rounded-full bg-blue-500" />
-                  <span>Bing Verification Meta Tag</span>
+                  <span className="h-2 w-2 rounded-full bg-blue-600" />
+                  <span>Bing Webmaster Tools</span>
                 </label>
                 <input
                   type="text"
@@ -250,16 +312,19 @@ export function SettingsView({ currentUser, onNavigate, onRefreshContext }: Sett
                   onChange={(e) => setBingVerification(e.target.value)}
                   className="w-full px-4 py-2.5 bg-gray-50 border-2 border-gray-200/80 focus:border-[#CC0000] focus:bg-white rounded-xl text-xs font-mono text-gray-700 transition focus:outline-none"
                 />
-                <p className="text-[10px] text-gray-400 font-sans leading-relaxed">
-                  Get from <a href="https://bing.com/webmasters" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#CC0000]">bing.com/webmasters</a>
+                <p className="text-[10px] text-gray-400 font-sans">
+                  Paste verification meta tag. Get from{" "}
+                  <a href="https://bing.com/webmasters" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#CC0000] font-bold">
+                    bing.com/webmasters
+                  </a>
                 </p>
               </div>
 
-              {/* 3. Yandex Verification */}
+              {/* 🟡 Yandex Webmaster */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-[#1A1A1A] flex items-center gap-1.5 uppercase">
                   <span className="h-2 w-2 rounded-full bg-yellow-500" />
-                  <span>Yandex Verification Meta Tag</span>
+                  <span>Yandex Webmaster</span>
                 </label>
                 <input
                   type="text"
@@ -268,16 +333,19 @@ export function SettingsView({ currentUser, onNavigate, onRefreshContext }: Sett
                   onChange={(e) => setYandexVerification(e.target.value)}
                   className="w-full px-4 py-2.5 bg-gray-50 border-2 border-gray-200/80 focus:border-[#CC0000] focus:bg-white rounded-xl text-xs font-mono text-gray-700 transition focus:outline-none"
                 />
-                <p className="text-[10px] text-gray-400 font-sans leading-relaxed">
-                  Get from <a href="https://webmaster.yandex.com" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#CC0000]">webmaster.yandex.com</a>
+                <p className="text-[10px] text-gray-400 font-sans">
+                  Paste verification meta tag. Get from{" "}
+                  <a href="https://webmaster.yandex.com" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#CC0000] font-bold">
+                    webmaster.yandex.com
+                  </a>
                 </p>
               </div>
 
-              {/* 4. Baidu Verification */}
+              {/* 🟠 Baidu Webmaster */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-[#1A1A1A] flex items-center gap-1.5 uppercase">
                   <span className="h-2 w-2 rounded-full bg-orange-500" />
-                  <span>Baidu Verification Meta Tag</span>
+                  <span>Baidu Webmaster</span>
                 </label>
                 <input
                   type="text"
@@ -286,16 +354,19 @@ export function SettingsView({ currentUser, onNavigate, onRefreshContext }: Sett
                   onChange={(e) => setBaiduVerification(e.target.value)}
                   className="w-full px-4 py-2.5 bg-gray-50 border-2 border-gray-200/80 focus:border-[#CC0000] focus:bg-white rounded-xl text-xs font-mono text-gray-700 transition focus:outline-none"
                 />
-                <p className="text-[10px] text-gray-400 font-sans leading-relaxed">
-                  Get from <a href="https://ziyuan.baidu.com" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#CC0000]">ziyuan.baidu.com</a>
+                <p className="text-[10px] text-gray-400 font-sans">
+                  Paste verification meta tag. Get from{" "}
+                  <a href="https://ziyuan.baidu.com" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#CC0000] font-bold">
+                    ziyuan.baidu.com
+                  </a>
                 </p>
               </div>
 
-              {/* 5. Pinterest Verification */}
+              {/* 🌐 Pinterest Domain Claim */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-[#1A1A1A] flex items-center gap-1.5 uppercase">
-                  <span className="h-2 w-2 rounded-full bg-black" />
-                  <span>Pinterest Domain Verification</span>
+                  <span className="h-2 w-2 rounded-full bg-red-500" />
+                  <span>Pinterest Domain Claim</span>
                 </label>
                 <input
                   type="text"
@@ -304,22 +375,24 @@ export function SettingsView({ currentUser, onNavigate, onRefreshContext }: Sett
                   onChange={(e) => setPinterestVerification(e.target.value)}
                   className="w-full px-4 py-2.5 bg-gray-50 border-2 border-gray-200/80 focus:border-[#CC0000] focus:bg-white rounded-xl text-xs font-mono text-gray-700 transition focus:outline-none"
                 />
-                <p className="text-[10px] text-gray-400 font-sans leading-relaxed">
-                  Get from <a href="https://pinterest.com/settings/claim" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#CC0000]">pinterest.com/settings/claim</a>
+                <p className="text-[10px] text-gray-400 font-sans">
+                  Paste domain claim meta tag. Get from{" "}
+                  <a href="https://pinterest.com/settings/claim" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#CC0000] font-bold">
+                    pinterest.com/settings/claim
+                  </a>
                 </p>
               </div>
             </div>
-          </div>
+          )}
 
-          {/* Action Footer */}
+          {/* Action Footer for Form */}
           <div className="pt-6 border-t border-gray-100 flex flex-col md:flex-row items-center justify-between gap-4">
-            
             {/* Status indicators */}
             <div className="text-xs">
               {status === "success" && (
                 <div className="text-green-600 font-bold flex items-center gap-1">
                   <Check size={16} />
-                  <span>Profile and verification settings saved successfully!</span>
+                  <span>Settings saved successfully!</span>
                 </div>
               )}
               {status === "error" && (
@@ -341,16 +414,28 @@ export function SettingsView({ currentUser, onNavigate, onRefreshContext }: Sett
                   <span>Saving...</span>
                 </>
               ) : (
-                <>
-                  <span>Save All Changes</span>
-                </>
+                <span>Save All Changes</span>
               )}
             </button>
           </div>
         </form>
 
+        {/* BOTTOM: Red logout button */}
+        <div className="pt-6 border-t border-gray-100 flex justify-between items-center">
+          <span className="text-[10px] text-gray-400 font-mono">ID: {currentUser.id}</span>
+          <button
+            type="button"
+            onClick={handleLogoutClick}
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-red-50 hover:bg-red-600 hover:text-white text-[#CC0000] text-xs font-bold uppercase tracking-wider rounded-xl transition-all"
+          >
+            <LogOut size={14} />
+            <span>Log Out Account</span>
+          </button>
+        </div>
+
       </div>
     </div>
   );
 }
+
 export default SettingsView;

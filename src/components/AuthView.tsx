@@ -188,11 +188,9 @@ export function AuthView({ initialMode = "login", onAuthSuccess }: AuthViewProps
                   className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200/80 focus:border-[#CC0000] focus:bg-white rounded-xl text-xs font-bold text-[#1A1A1A] transition focus:outline-none font-mono"
                   required
                 />
-                {username && (
-                  <p className="text-[10px] font-mono text-gray-400">
-                    Your store domain: <span className="text-red-600 font-bold">{username}.trodex.com</span>
-                  </p>
-                )}
+                <p className="text-[10px] font-mono text-gray-400">
+                  Your store will be: <span className="text-red-600 font-bold">{username || "username"}.trodex.com</span>
+                </p>
               </div>
 
               <div className="space-y-1">
