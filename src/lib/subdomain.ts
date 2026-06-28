@@ -29,8 +29,8 @@ export function getSubdomain(req: NextRequest): string | null {
     return domainParts[0].toLowerCase();
   }
 
-  // General subdomain detection if not a local dev environment or standard cloud run domains
-  if (domainParts.length > 2 && !hostname.endsWith("run.app") && !hostname.endsWith("web.app")) {
+  // General subdomain detection if not a local dev environment or standard cloud run/vercel domains
+  if (domainParts.length > 2 && !hostname.endsWith("run.app") && !hostname.endsWith("web.app") && !hostname.endsWith("vercel.app")) {
     return domainParts[0].toLowerCase();
   }
 

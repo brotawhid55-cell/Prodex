@@ -21,6 +21,7 @@ export function ClientApp() {
   const [currentUser, setCurrentUser] = useState<any | null>(null);
   const [isUsingNeon, setIsUsingNeon] = useState(false);
   const [loadingContext, setLoadingContext] = useState(true);
+  const [dbError, setDbError] = useState<string | null>(null);
 
   // Sync state with back button popstate & set initial path on mount safely
   useEffect(() => {
@@ -47,8 +48,14 @@ export function ClientApp() {
       setSubdomainUser(data.subdomainUser);
       setCurrentUser(data.currentUser);
       setIsUsingNeon(data.isUsingNeon);
-    } catch (err) {
+      if (data.error) {
+        setDbError(data.error);
+      } else {
+        setDbError(null);
+      }
+    } catch (err: any) {
       console.error("Error loading full-stack context:", err);
+      setDbError(err.message || "Failed to contact local API server.");
     } finally {
       setLoadingContext(false);
     }
@@ -119,6 +126,25 @@ export function ClientApp() {
             <span className="text-xs font-mono font-bold text-gray-500 uppercase tracking-widest">
               Initializing Trodex Environment...
             </span>
+          </div>
+        ) : dbError ? (
+          <div className="max-w-2xl mx-auto my-8 p-6 md:p-8 bg-[#1A1A1A] text-white rounded-2xl shadow-xl border border-red-900/40">
+            <div className="flex items-center gap-3 mb-4">
+              <span className="flex items-center justify-center bg-red-600/25 p-2 rounded-lg text-[#CC0000] font-bold text-lg">⚠️</span>
+              <h2 className="text-xl font-bold tracking-tight text-white">Database Connection Required</h2>
+            </div>
+            <p className="text-gray-300 text-sm leading-relaxed mb-6 whitespace-pre-line bg-black/40 p-4 rounded-xl border border-white/5 font-mono">
+              {dbError}
+            </p>
+            <div className="border-t border-gray-800 pt-6">
+              <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-3">How to Resolve This:</h3>
+              <ol className="space-y-3 text-xs text-gray-400 list-decimal pl-4">
+                <li>Go to <a href="https://neon.tech" target="_blank" rel="noopener noreferrer" className="text-[#CC0000] underline hover:text-red-400">neon.tech</a> and create a free PostgreSQL database.</li>
+                <li>Copy the connection string (pooled connection string is recommended).</li>
+                <li>Add it as <code className="bg-gray-800 text-gray-200 px-1.5 py-0.5 rounded font-mono text-[11px]">DATABASE_URL</code> to your environment variables (in <code className="bg-gray-800 text-gray-200 px-1.5 py-0.5 rounded font-mono text-[11px]">.env.local</code> for local dev, or in Vercel settings for production).</li>
+                <li>Refresh the page to automatically bootstrap and seed your database!</li>
+              </ol>
+            </div>
           </div>
         ) : (
           <AnimatePresence mode="wait">

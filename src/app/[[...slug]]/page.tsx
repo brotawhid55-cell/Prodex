@@ -31,7 +31,7 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
       subdomain = domainParts[0].toLowerCase();
     } else if (hostname.endsWith("trodex.com") && domainParts.length > 2) {
       subdomain = domainParts[0].toLowerCase();
-    } else if (domainParts.length > 2 && !hostname.endsWith("run.app") && !hostname.endsWith("web.app")) {
+    } else if (domainParts.length > 2 && !hostname.endsWith("run.app") && !hostname.endsWith("web.app") && !hostname.endsWith("vercel.app")) {
       subdomain = domainParts[0].toLowerCase();
     }
   }
@@ -43,31 +43,35 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
   let verificationCode = "";
 
   if (subdomain) {
-    const user = await db.getUserByUsername(subdomain);
-    if (user) {
-      if (user.search_console_meta_tag) {
-        const match = user.search_console_meta_tag.match(/content="([^"]+)"/);
-        if (match) {
-          verificationCode = match[1];
-        } else {
-          verificationCode = user.search_console_meta_tag;
+    try {
+      const user = await db.getUserByUsername(subdomain);
+      if (user) {
+        if (user.search_console_meta_tag) {
+          const match = user.search_console_meta_tag.match(/content="([^"]+)"/);
+          if (match) {
+            verificationCode = match[1];
+          } else {
+            verificationCode = user.search_console_meta_tag;
+          }
         }
-      }
 
-      if (isPostRoute && postSlug) {
-        const post = await db.getPostBySlugAndUser(user.id, postSlug);
-        if (post) {
-          title = `${post.title} - ${post.rating}★ | trodex`;
-          description = post.meta_description;
-          imageUrl = post.image_url;
-          canonicalUrl = `https://${subdomain}.trodex.com/post/${post.slug}`;
+        if (isPostRoute && postSlug) {
+          const post = await db.getPostBySlugAndUser(user.id, postSlug);
+          if (post) {
+            title = `${post.title} - ${post.rating}★ | trodex`;
+            description = post.meta_description;
+            imageUrl = post.image_url;
+            canonicalUrl = `https://${subdomain}.trodex.com/post/${post.slug}`;
+          }
+        } else {
+          title = `${user.display_name}'s Products | trodex`;
+          description = user.bio || `Explore handpicked products, custom reviews, and affiliate items curated by ${user.display_name} on Trodex.`;
+          imageUrl = user.avatar_url;
+          canonicalUrl = `https://${subdomain}.trodex.com/`;
         }
-      } else {
-        title = `${user.display_name}'s Products | trodex`;
-        description = user.bio || `Explore handpicked products, custom reviews, and affiliate items curated by ${user.display_name} on Trodex.`;
-        imageUrl = user.avatar_url;
-        canonicalUrl = `https://${subdomain}.trodex.com/`;
       }
+    } catch (err) {
+      console.error("Database connection failed in generateMetadata:", err);
     }
   }
 
